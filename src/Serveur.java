@@ -1,55 +1,71 @@
-/*import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class Serveur {
 
-    try {
+    public static void main(String[] args) {
         // Connexion à la base de données
-        Connection cnx = DriverManager.getConnection("jdbc:mariadb://dwarves.iut-fbleau.fr/siuda", "siuda", "Siuda77140");
+        try (Connection cnx = DriverManager.getConnection("jdbc:mariadb://dwarves.iut-fbleau.fr/siuda", "siuda", "Siuda77140")) {
 
-        // Requête SQL pour obtenir les points obtenus par le compétiteur dans d'autres pays
-        String query = "SELECT p1.Pays AS Competiteur, p2.Pays AS Votant, v.Points " +
-            "FROM Vote v " +
-            "JOIN PaysDEV p1 ON v.IDCompétiteur = p1.ID " +
-            "JOIN PaysDEV p2 ON v.IDVotants = p2.ID " +
-            "WHERE p1.Pays = ?";
+            // Appel des différentes fonctions selon les besoins
+            afficherSeries(cnx); // Afficher toutes les séries disponibles
+            afficherScoresPourSerie(cnx, 1); // Afficher les scores pour une série donnée (ex : série avec ID 1)
 
-            PreparedStatement pst = cnx.prepareStatement(query);
-            pst.setString(1, paysCompetiteur);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    // Fonction pour afficher toutes les séries créées
+    public static void afficherSeries(Connection cnx) {
+        String query = "SELECT idSerie, nomSerie FROM Series";
+
+        try (PreparedStatement pst = cnx.prepareStatement(query); 
+             ResultSet rs = pst.executeQuery()) {
+
+            System.out.println("Liste des séries disponibles :");
+
+            boolean hasResults = false;
+            while (rs.next()) {
+                int idSerie = rs.getInt("idSerie");
+                String nomSerie = rs.getString("nomSerie");
+                System.out.printf("ID: %d, Nom: %s\n", idSerie, nomSerie);
+                hasResults = true;
+            }
+
+            if (!hasResults) {
+                System.out.println("Aucune série disponible.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Fonction pour afficher les scores pour une série donnée
+    public static void afficherScoresPourSerie(Connection cnx, int idSerie) {
+        String query = "SELECT s.idScore, s.score " +
+                       "FROM Scores s " +
+                       "WHERE s.idSerie = ? " +
+                       "ORDER BY s.score DESC";
+
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, idSerie);
             ResultSet rs = pst.executeQuery();
 
-            int totalPoints = 0;
+            System.out.println("Scores pour la série ID " + idSerie + ":");
+
             boolean hasResults = false;
+            while (rs.next()) {
+                int idScore = rs.getInt("idScore");
+                int score = rs.getInt("score");
+                System.out.printf("ID: %d, Score: %d\n", idScore, score);
+                hasResults = true;
+            }
 
-            System.out.println("Points obtenus par " + paysCompetiteur + ":");
-
-            // Parcours des résultats et affichage formaté
-        while (rs.next()) {
-            String votant = rs.getString("Votant");
-            int points = rs.getInt("Points");
-            totalPoints += points;
-            hasResults = true;
-
-            System.out.printf("  %s\t%d\n", votant, points);
+            if (!hasResults) {
+                System.out.println("Aucun score disponible pour cette série.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        if (hasResults) {
-            System.out.println("\t\t---");
-            System.out.printf("  Total\t\t%d\n", totalPoints);
-        } else {
-            System.out.println("Aucun point obtenu pour ce pays.");
-        }
-
-        // Fermeture des ressources
-        rs.close();
-        pst.close();
-        cnx.close();
-    } catch (SQLException e) {
-        e.printStackTrace();
     }
 }
-*/
