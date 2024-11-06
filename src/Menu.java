@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.*;
+import javax.swing.JTextArea;
 
 public class Menu {
     private static JFrame frame;
@@ -95,25 +97,17 @@ public class Menu {
 
         // Bouton Créer un Plateau
         JButton creerPlateauButton = new JButton("Créer un Plateau");
-        creerPlateauButton.setPreferredSize(new Dimension(250, 50));  // Agrandir le bouton
-        creerPlateauButton.setAlignmentX(Component.CENTER_ALIGNMENT);  // Centrer le bouton
-        creerPlateauButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Logique pour créer un plateau
-                System.out.println("Création d'un plateau...");
-            }
-        });
+        creerPlateauButton.setPreferredSize(new Dimension(250, 50));
+        creerPlateauButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        creerPlateauButton.addActionListener(e -> System.out.println("Création d'un plateau..."));
+
 
         // Bouton Jouer un Plateau
         JButton jouerPlateauButton = new JButton("Jouer un Plateau");
-        jouerPlateauButton.setPreferredSize(new Dimension(250, 50));  // Agrandir le bouton
-        jouerPlateauButton.setAlignmentX(Component.CENTER_ALIGNMENT);  // Centrer le bouton
-        jouerPlateauButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Logique pour jouer un plateau
-                System.out.println("Jouer un plateau...");
-            }
-        });
+        jouerPlateauButton.setPreferredSize(new Dimension(250, 50));
+        jouerPlateauButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        jouerPlateauButton.addActionListener(e -> ouvrirFenetreSeries());
+
 
         // Ajouter les boutons au panneau
         panel.add(Box.createVerticalStrut(20)); // Espacement en haut
@@ -123,6 +117,26 @@ public class Menu {
         panel.add(Box.createVerticalStrut(20)); // Espacement en bas
 
         return panel;
+    }
+
+    private static void ouvrirFenetreSeries() {
+        JFrame seriesFrame = new JFrame("Séries Disponibles");
+        seriesFrame.setSize(300, 400);
+        seriesFrame.setLocationRelativeTo(null);
+        seriesFrame.setLayout(new BorderLayout());
+
+        JTextArea seriesTextArea = new JTextArea();
+        seriesTextArea.setEditable(false);
+
+        try (Connection cnx = DriverManager.getConnection("jdbc:mariadb://dwarves.iut-fbleau.fr/siuda", "siuda", "Siuda77140")) {
+            // Appel à la fonction afficherSeries pour obtenir la liste des séries
+            Serveur.afficherSeries(cnx, seriesTextArea);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        seriesFrame.add(new JScrollPane(seriesTextArea), BorderLayout.CENTER);
+        seriesFrame.setVisible(true);
     }
 
     private static JPanel createReglesPanel() {

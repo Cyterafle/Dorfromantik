@@ -1,4 +1,6 @@
 import java.sql.*;
+import javax.swing.JTextArea;
+
 
 public class Serveur {
 
@@ -7,7 +9,7 @@ public class Serveur {
         try (Connection cnx = DriverManager.getConnection("jdbc:mariadb://dwarves.iut-fbleau.fr/siuda", "siuda", "Siuda77140")) {
 
             // Appel des différentes fonctions selon les besoins
-            afficherSeries(cnx); // Afficher toutes les séries disponibles
+            afficherSeries((cnx), new JTextArea()); // Afficher toutes les séries disponibles
             afficherScoresPourSerie(cnx, 1); // Afficher les scores pour une série donnée (ex : série avec ID 1)
 
         } catch (SQLException e) {
@@ -16,24 +18,24 @@ public class Serveur {
     }
 
     // Fonction pour afficher toutes les séries créées
-    public static void afficherSeries(Connection cnx) {
+    public static void afficherSeries(Connection cnx, JTextArea textArea) {
         String query = "SELECT idSerie, nomSerie FROM Series";
 
-        try (PreparedStatement pst = cnx.prepareStatement(query); 
+        try (PreparedStatement pst = cnx.prepareStatement(query);
              ResultSet rs = pst.executeQuery()) {
 
-            System.out.println("Liste des séries disponibles :");
+            textArea.append("Liste des séries disponibles :\n");
 
             boolean hasResults = false;
             while (rs.next()) {
                 int idSerie = rs.getInt("idSerie");
                 String nomSerie = rs.getString("nomSerie");
-                System.out.printf("ID: %d, Nom: %s\n", idSerie, nomSerie);
+                textArea.append("ID: " + idSerie + ", Nom: " + nomSerie + "\n");
                 hasResults = true;
             }
 
             if (!hasResults) {
-                System.out.println("Aucune série disponible.");
+                textArea.append("Aucune série disponible.\n");
             }
         } catch (SQLException e) {
             e.printStackTrace();
