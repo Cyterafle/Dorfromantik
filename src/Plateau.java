@@ -3,10 +3,10 @@ import java.awt.*;
 import java.awt.geom.Path2D;
 
 public class Plateau extends JPanel {
-    private static final int HEX_SIZE = 40; // Taille du côté de l'hexagone
-    private static final int BORDER_HEXAGONS = 50; // Nombre d'hexagones entre le centre et le bord
+    public static final int HEX_SIZE = 40; // Taille du côté de l'hexagone
+    public static final int BORDER_HEXAGONS = 50; // Nombre d'hexagones entre le centre et le bord
     private static final Color BORDER_COLOR = Color.BLACK; // Couleur des bordures
-    private static final Color CENTER_COLOR = Color.RED; // Couleur de l'hexagone central
+    private static final Color CENTER_COLOR = Color.BLUE; // Couleur de l'hexagone central
 
     Point dragStartPoint = null; // Point de départ pour le déplacement
 
@@ -34,40 +34,49 @@ public class Plateau extends JPanel {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setStroke(new BasicStroke(2));
+protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    Graphics2D g2d = (Graphics2D) g;
+    g2d.setStroke(new BasicStroke(2));
 
-        int hexHeight = (int) (Math.sqrt(3) * HEX_SIZE);
-        Dimension size = getSize();
+    int hexHeight = (int) (Math.sqrt(3) * HEX_SIZE);
+    Dimension size = getSize();
 
-        int columns = size.width / (HEX_SIZE * 3 / 2) + 2;
-        int rows = size.height / hexHeight + 2;
+    int centerX = size.width / 2;
+    int centerY = size.height / 2;
 
-        int centerX = size.width / 2;
-        int centerY = size.height / 2;
+    // Dessiner et remplir l'hexagone central en rouge
+    g2d.setColor(CENTER_COLOR);
+    Path2D.Double centerHex = createHexagon(centerX, centerY);
+    g2d.fill(centerHex);
+    g2d.setColor(BORDER_COLOR);
+    g2d.draw(centerHex);
 
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < columns; col++) {
-                int x = col * (HEX_SIZE * 3 / 2);
-                int y = row * hexHeight + (col % 2) * (hexHeight / 2);
+    // Nombre d'hexagones à afficher horizontalement et verticalement
+    int cols = BORDER_HEXAGONS; // Nombre d'hexagones à droite/gauche du centre
+    int rows = BORDER_HEXAGONS; // Nombre d'hexagones au-dessus/en-dessous du centre
 
-                Path2D.Double hex = createHexagon(x, y);
+    // Dessiner les hexagones dans une grille
+    for (int row = -rows; row <= rows; row++) {
+        for (int col = -cols; col <= cols; col++) {
+            // Calculer la position de chaque hexagone
+            int x = centerX + col * HEX_SIZE * 3 / 2;
+            int y = centerY + row * hexHeight + (col % 2) * (hexHeight / 2);
 
-                if (Math.abs(x - centerX) < HEX_SIZE && Math.abs(y - centerY) < hexHeight / 2) {
-                    g2d.setColor(CENTER_COLOR); 
-                    g2d.fill(hex); 
-                }
+            // Ne pas redessiner l'hexagone central
+            if (col == 0 && row == 0) continue;
 
-                g2d.setColor(BORDER_COLOR);
-                g2d.draw(hex);
-            }
+            Path2D.Double hex = createHexagon(x, y);
+            g2d.setColor(BORDER_COLOR);
+            g2d.draw(hex);
         }
     }
+}
+
+
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Infinite Hexagonal Grid with Center Hexagon");
+        JFrame frame = new JFrame("Dorfromantik");
         Plateau hexGrid = new Plateau();
 
         int preferredWidth = (2 * BORDER_HEXAGONS + 1) * (int) (HEX_SIZE * 3 / 2);

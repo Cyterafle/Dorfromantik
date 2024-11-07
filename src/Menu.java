@@ -93,31 +93,29 @@ public class Menu {
     private static JPanel createJouerPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);  // Centrer tout le contenu
-
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
         // Bouton Créer un Plateau
         JButton creerPlateauButton = new JButton("Créer un Plateau");
         creerPlateauButton.setPreferredSize(new Dimension(250, 50));
         creerPlateauButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        creerPlateauButton.addActionListener(e -> System.out.println("Création d'un plateau..."));
-
-
+        creerPlateauButton.addActionListener(e -> ouvrirFenetrePlateau());
+    
         // Bouton Jouer un Plateau
         JButton jouerPlateauButton = new JButton("Jouer un Plateau");
         jouerPlateauButton.setPreferredSize(new Dimension(250, 50));
         jouerPlateauButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         jouerPlateauButton.addActionListener(e -> ouvrirFenetreSeries());
-
-
-        // Ajouter les boutons au panneau
-        panel.add(Box.createVerticalStrut(20)); // Espacement en haut
+    
+        panel.add(Box.createVerticalStrut(20));
         panel.add(creerPlateauButton);
-        panel.add(Box.createVerticalStrut(20)); // Espacement entre les boutons
+        panel.add(Box.createVerticalStrut(20));
         panel.add(jouerPlateauButton);
-        panel.add(Box.createVerticalStrut(20)); // Espacement en bas
-
+        panel.add(Box.createVerticalStrut(20));
+    
         return panel;
     }
+    
 
     private static void ouvrirFenetreSeries() {
         JFrame seriesFrame = new JFrame("Séries Disponibles");
@@ -138,6 +136,27 @@ public class Menu {
         seriesFrame.add(new JScrollPane(seriesTextArea), BorderLayout.CENTER);
         seriesFrame.setVisible(true);
     }
+
+    private static void ouvrirFenetrePlateau() {
+        JFrame plateauFrame = new JFrame("Dorfromantik - Création d'un Plateau");
+        Plateau hexGrid = new Plateau();
+    
+        int preferredWidth = (2 * Plateau.BORDER_HEXAGONS + 1) * (int) (Plateau.HEX_SIZE * 3 / 2);
+        int preferredHeight = (2 * Plateau.BORDER_HEXAGONS + 1) * (int) (Math.sqrt(3) * Plateau.HEX_SIZE);
+        hexGrid.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
+    
+        JScrollPane scrollPane = new JScrollPane(hexGrid);
+    
+        int centerX = (preferredWidth / 2) - (800 / 2);
+        int centerY = (preferredHeight / 2) - (600 / 2);
+        scrollPane.getViewport().setViewPosition(new Point(centerX, centerY));
+    
+        plateauFrame.add(scrollPane);
+        plateauFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        plateauFrame.setLocationRelativeTo(null);
+        plateauFrame.setVisible(true);
+    }
+    
 
     private static JPanel createReglesPanel() {
         JPanel panel = new JPanel();
