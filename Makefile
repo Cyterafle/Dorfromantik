@@ -7,6 +7,7 @@ JVM = java
 SRCDIR = ./src
 OUTDIR = ./out
 DOCDIR = ./doc
+LIBDIR = .:./lib/mariadb-client.jar
 OFILES = $(subst src/,out/,$(subst .java,.class,$(shell find $(SRCDIR)/ -name *.java)))
 
 ### REGLES ESSENTIELLES ###
@@ -19,7 +20,7 @@ $(OUTDIR)/Main.class : $(OFILES)
 
 # Règle pour lancer Main.class
 run : $(OUTDIR)/Main.class
-	$(JVM) -cp $(OUTDIR) Main
+	$(JVM) -cp "$(OUTDIR):$(LIBDIR)" Main
 
 ### REGLES OPTIONNELLES ###
 
