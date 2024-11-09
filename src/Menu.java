@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-import javax.swing.JTextArea;
 
 public class Menu {
     private static JFrame frame;
@@ -108,9 +107,9 @@ public class Menu {
         jouerPlateauButton.addActionListener(e -> ouvrirFenetreSeries());
     
         panel.add(Box.createVerticalStrut(20));
-        panel.add(creerPlateauButton);
-        panel.add(Box.createVerticalStrut(20));
         panel.add(jouerPlateauButton);
+        panel.add(Box.createVerticalStrut(20));
+        panel.add(creerPlateauButton);
         panel.add(Box.createVerticalStrut(20));
     
         return panel;
@@ -119,23 +118,45 @@ public class Menu {
 
     private static void ouvrirFenetreSeries() {
         JFrame seriesFrame = new JFrame("Séries Disponibles");
-        seriesFrame.setSize(300, 400);
+        seriesFrame.setSize(400, 500);
         seriesFrame.setLocationRelativeTo(null);
         seriesFrame.setLayout(new BorderLayout());
-
-        JTextArea seriesTextArea = new JTextArea();
-        seriesTextArea.setEditable(false);
-
+    
+        // Panneau principal avec un BoxLayout (Y_AXIS) pour empiler les composants verticalement
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+    
+        // Ajoutez un label en haut pour le texte
+        JLabel label = new JLabel("Choisissez une série");
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);  // Centrer le texte
+        label.setFont(new Font("Arial", Font.BOLD, 16));
+        mainPanel.add(Box.createVerticalStrut(20)); // Espacement en haut
+        mainPanel.add(label);
+        mainPanel.add(Box.createVerticalStrut(20)); // Espacement entre le texte et les boutons
+    
+        // Panneau pour les boutons, avec un BoxLayout pour l'alignement vertical
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
+        buttonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // Centre le panel des boutons horizontalement
+    
         try (Connection cnx = DriverManager.getConnection("jdbc:mariadb://dwarves.iut-fbleau.fr/siuda", "siuda", "Siuda77140")) {
-            // Appel à la fonction afficherSeries pour obtenir la liste des séries
-            Serveur.afficherSeries(cnx, seriesTextArea);
+            // Appel à la fonction afficherSeries pour remplir le panneau avec des boutons
+            Serveur.afficherSeries(cnx, buttonsPanel);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        seriesFrame.add(new JScrollPane(seriesTextArea), BorderLayout.CENTER);
+    
+        // Ajouter le panneau des boutons avec une barre de défilement
+        JScrollPane scrollPane = new JScrollPane(buttonsPanel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Désactiver la barre horizontale
+        mainPanel.add(scrollPane);
+    
+        // Ajouter le panneau principal à la fenêtre
+        seriesFrame.add(mainPanel, BorderLayout.CENTER);
         seriesFrame.setVisible(true);
     }
+    
+    
 
     private static void ouvrirFenetrePlateau() {
         JFrame plateauFrame = new JFrame("Dorfromantik - Création d'un Plateau");
