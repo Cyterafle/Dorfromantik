@@ -12,32 +12,34 @@ OFILES = $(subst src/,out/,$(subst .java,.class,$(shell find $(SRCDIR)/ -name *.
 
 ### REGLES ESSENTIELLES ###
 
+# Compilation des fichiers .java en .class
 $(OUTDIR)/%.class : $(SRCDIR)/%.java
 	@mkdir -p $(@D)
 	${JC} ${JCFLAGS} -cp $(SRCDIR) -d $(@D) $<
 
-$(OUTDIR)/Main.class : $(OFILES)
+# Compilation de tous les fichiers nécessaires sans redéfinir $(OUTDIR)/Main.class
+all: $(OFILES)
 
 # Règle pour lancer Main.class
-run : $(OUTDIR)/Main.class
+run: all
 	$(JVM) -cp "$(OUTDIR):$(LIBDIR)" Main
 
 ### REGLES OPTIONNELLES ###
 
-clean :
+clean:
 	-rm -rf $(OUTDIR)
 	-rm -rf $(DOCDIR)
 
-mrproper : clean $(OUTDIR)/Main.class
+mrproper: clean all
 
-doc :
+doc:
 	javadoc -d $(DOCDIR) $(SRCDIR)/*.java
- 
-seedoc :
+
+seedoc:
 	firefox $(DOCDIR)/index.html &
 
 ### BUTS FACTICES ###
 
-.PHONY : play create clean mrproper makerun
+.PHONY: run clean mrproper doc seedoc
 
 ### FIN ###
