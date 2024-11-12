@@ -22,10 +22,12 @@ public class Menu {
         JPanel menuPanel = createMenuPanel();
         JPanel jouerPanel = createJouerPanel();
         JPanel reglesPanel = createReglesPanel();
+        JPanel commandesPanel = createCommandesPanel(); // Panel for game commands
 
         cardPanel.add(menuPanel, "Menu");
         cardPanel.add(jouerPanel, "Jouer");
         cardPanel.add(reglesPanel, "Règles");
+        cardPanel.add(commandesPanel, "Commandes"); // Adding the new panel
 
         cardLayout.show(cardPanel, "Menu");
 
@@ -49,6 +51,11 @@ public class Menu {
         reglesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         reglesButton.addActionListener(e -> cardLayout.show(cardPanel, "Règles"));
 
+        JButton commandesButton = new JButton("Commandes"); // New button for "Commandes"
+        commandesButton.setPreferredSize(new Dimension(200, 50));
+        commandesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        commandesButton.addActionListener(e -> cardLayout.show(cardPanel, "Commandes"));
+
         JButton quitterButton = new JButton("Quitter");
         quitterButton.setPreferredSize(new Dimension(200, 50));
         quitterButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -58,6 +65,8 @@ public class Menu {
         panel.add(jouerButton);
         panel.add(Box.createVerticalStrut(20));
         panel.add(reglesButton);
+        panel.add(Box.createVerticalStrut(20));
+        panel.add(commandesButton); // Adding the new button
         panel.add(Box.createVerticalStrut(20));
         panel.add(quitterButton);
         panel.add(Box.createVerticalStrut(20));
@@ -166,6 +175,42 @@ public class Menu {
         reglesTextArea.setWrapStyleWord(true);
 
         JScrollPane scrollPane = new JScrollPane(reglesTextArea);
+        scrollPane.setBorder(null); 
+
+        JButton retourButton = new JButton("Retour");
+        retourButton.setPreferredSize(new Dimension(200, 50));
+        retourButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        retourButton.addActionListener(e -> cardLayout.show(cardPanel, "Menu"));
+
+        panel.add(Box.createVerticalStrut(20));
+        panel.add(scrollPane);
+        panel.add(Box.createVerticalStrut(20));
+        panel.add(retourButton);
+        panel.add(Box.createVerticalStrut(20));
+
+        return panel;
+    }
+
+    private static JPanel createCommandesPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JTextArea commandesTextArea = new JTextArea(
+            "Commandes de jeu :\n\n" +
+            "Flèche droite : fait pivoter l'hexagone de 1/6 de tour vers la droite.\n" +
+            "Flèche gauche : fait pivoter l'hexagone de 1/6 de tour vers la gauche.\n" +
+            "Clic gauche : sélectionne un emplacement pour poser une tuile.\n" +
+            "Maintien du clic droit : permet de déplacer la vue dans la fenêtre."
+        );
+        commandesTextArea.setEditable(false);
+        commandesTextArea.setFocusable(false);
+        commandesTextArea.setOpaque(false);
+        commandesTextArea.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        commandesTextArea.setLineWrap(true);
+        commandesTextArea.setWrapStyleWord(true);
+
+        JScrollPane scrollPane = new JScrollPane(commandesTextArea);
         scrollPane.setBorder(null); 
 
         JButton retourButton = new JButton("Retour");
