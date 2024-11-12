@@ -83,15 +83,6 @@ public class Menu {
     gbc.insets = new Insets(10, 10, 10, 10);
     gbc.anchor = GridBagConstraints.CENTER;
 
-
-    JButton creerPlateauButton = new JButton("Créer un Plateau");
-    creerPlateauButton.setPreferredSize(new Dimension(250, 50));
-    gbc.gridx = 0;
-    gbc.gridy = 0;
-    creerPlateauButton.addActionListener(e -> ouvrirFenetrePlateau());
-    panel.add(creerPlateauButton, gbc);
-
-
     JButton jouerPlateauButton = new JButton("Jouer un Plateau");
     jouerPlateauButton.setPreferredSize(new Dimension(250, 50));
     gbc.gridy = 1;
@@ -114,42 +105,71 @@ public class Menu {
 }
 
 
-    private static void ouvrirFenetreSeries() {
-        JFrame seriesFrame = new JFrame("Séries Disponibles");
-        seriesFrame.setSize(400, 500);
-        seriesFrame.setLocationRelativeTo(null);
-        seriesFrame.setLayout(new BorderLayout());
+private static void ouvrirFenetreSeries() {
+    JFrame seriesFrame = new JFrame("Séries Disponibles");
+    seriesFrame.setSize(400, 500);
+    seriesFrame.setLocationRelativeTo(null);
+    seriesFrame.setLayout(new BorderLayout());
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+    JPanel mainPanel = new JPanel();
+    mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-        JLabel label = new JLabel("Choisissez une série");
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        label.setFont(new Font("Arial", Font.BOLD, 16));
-        mainPanel.add(Box.createVerticalStrut(20));
-        mainPanel.add(label);
-        mainPanel.add(Box.createVerticalStrut(20));
+    JLabel label = new JLabel("Choisissez une série");
+    label.setAlignmentX(Component.CENTER_ALIGNMENT);
+    label.setFont(new Font("Arial", Font.BOLD, 16));
+    mainPanel.add(Box.createVerticalStrut(20));
+    mainPanel.add(label);
+    mainPanel.add(Box.createVerticalStrut(20));
 
-        JPanel buttonsPanel = new JPanel();
-        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
-        buttonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JPanel buttonsPanel = new JPanel();
+    buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
+    buttonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        try (Connection cnx = DriverManager.getConnection("jdbc:mariadb://dwarves.iut-fbleau.fr/siuda", "siuda", "Siuda77140")) {
-            Serveur.afficherSeries(cnx, buttonsPanel);
-        } catch (SQLException e) {
-            e.printStackTrace();
+    try (Connection cnx = DriverManager.getConnection("jdbc:mariadb://dwarves.iut-fbleau.fr/siuda", "siuda", "Siuda77140")) {
+        String query = "SELECT idSerie, nomSerie FROM Series";
+        try (PreparedStatement pst = cnx.prepareStatement(query);
+             ResultSet rs = pst.executeQuery()) {
+
+            boolean hasResults = false;
+            while (rs.next()) {
+                int idSerie = rs.getInt("idSerie");
+                String nomSerie = rs.getString("nomSerie");
+                JButton seriesButton = new JButton(nomSerie);
+                seriesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+                // Ajouter un ActionListener pour gérer le clic sur le bouton
+                seriesButton.addActionListener(e -> {
+                    JOptionPane.showMessageDialog(seriesFrame, "Vous avez sélectionné la série : " + nomSerie);
+                    seriesFrame.dispose(); // Fermer la fenêtre des séries
+                    ouvrirFenetrePlateau(); // Ouvrir la fenêtre du plateau
+                });
+
+                buttonsPanel.add(seriesButton);
+                buttonsPanel.add(Box.createVerticalStrut(10)); // Espacement entre les boutons
+                hasResults = true;
+            }
+
+            if (!hasResults) {
+                JLabel noSeriesLabel = new JLabel("Aucune série disponible.");
+                noSeriesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                buttonsPanel.add(noSeriesLabel);
+            }
         }
-
-        JScrollPane scrollPane = new JScrollPane(buttonsPanel);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        mainPanel.add(scrollPane);
-
-        seriesFrame.add(mainPanel, BorderLayout.CENTER);
-        seriesFrame.setVisible(true);
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
 
+    JScrollPane scrollPane = new JScrollPane(buttonsPanel);
+    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    mainPanel.add(scrollPane);
+
+    seriesFrame.add(mainPanel, BorderLayout.CENTER);
+    seriesFrame.setVisible(true);
+}
+
+
     private static void ouvrirFenetrePlateau() {
-        JFrame plateauFrame = new JFrame("Dorfromantik - Création d'un Plateau");
+        JFrame plateauFrame = new JFrame("Dorfromantik - Plateau");
         Plateau hexGrid = new Plateau();
 
         int preferredWidth = (2 * Plateau.BORDER_HEXAGONS + 1) * (int) (Plateau.HEX_SIZE * 3 / 2);
