@@ -11,7 +11,7 @@ public class Menu {
 
     public static void main(String[] args) {
         frame = new JFrame("Menu");
-        frame.setSize(400, 300);
+        frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.setLocationRelativeTo(null);
@@ -22,12 +22,12 @@ public class Menu {
         JPanel menuPanel = createMenuPanel();
         JPanel jouerPanel = createJouerPanel();
         JPanel reglesPanel = createReglesPanel();
-        JPanel commandesPanel = createCommandesPanel(); // Panel for game commands
+        JPanel commandesPanel = createCommandesPanel();
 
         cardPanel.add(menuPanel, "Menu");
         cardPanel.add(jouerPanel, "Jouer");
         cardPanel.add(reglesPanel, "Règles");
-        cardPanel.add(commandesPanel, "Commandes"); // Adding the new panel
+        cardPanel.add(commandesPanel, "Commandes");
 
         cardLayout.show(cardPanel, "Menu");
 
@@ -37,66 +37,82 @@ public class Menu {
     }
 
     private static JPanel createMenuPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
+        JPanel panel = new JPanel(new GridBagLayout()); 
+        GridBagConstraints gbc = new GridBagConstraints();
+    
+        int buttonWidth = 200;
+        int buttonHeight = 50;
+    
+        gbc.anchor = GridBagConstraints.CENTER;
+    
+        gbc.insets = new Insets(10, 10, 10, 10);
+    
         JButton jouerButton = new JButton("Jouer");
-        jouerButton.setPreferredSize(new Dimension(200, 50));
-        jouerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        jouerButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         jouerButton.addActionListener(e -> cardLayout.show(cardPanel, "Jouer"));
+        panel.add(jouerButton, gbc);
 
         JButton reglesButton = new JButton("Règles");
-        reglesButton.setPreferredSize(new Dimension(200, 50));
-        reglesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        reglesButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        gbc.gridy = 1;
         reglesButton.addActionListener(e -> cardLayout.show(cardPanel, "Règles"));
+        panel.add(reglesButton, gbc);
 
-        JButton commandesButton = new JButton("Commandes"); // New button for "Commandes"
-        commandesButton.setPreferredSize(new Dimension(200, 50));
-        commandesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JButton commandesButton = new JButton("Commandes");
+        commandesButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        gbc.gridy = 2;
         commandesButton.addActionListener(e -> cardLayout.show(cardPanel, "Commandes"));
+        panel.add(commandesButton, gbc);
 
         JButton quitterButton = new JButton("Quitter");
-        quitterButton.setPreferredSize(new Dimension(200, 50));
-        quitterButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        quitterButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        gbc.gridy = 3;
         quitterButton.addActionListener(e -> System.exit(0));
-
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(jouerButton);
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(reglesButton);
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(commandesButton); // Adding the new button
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(quitterButton);
-        panel.add(Box.createVerticalStrut(20));
+        panel.add(quitterButton, gbc);
 
         return panel;
     }
 
     private static JPanel createJouerPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JPanel panel = new JPanel(new GridBagLayout()); 
+    GridBagConstraints gbc = new GridBagConstraints();
+    panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton creerPlateauButton = new JButton("Créer un Plateau");
-        creerPlateauButton.setPreferredSize(new Dimension(250, 50));
-        creerPlateauButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        creerPlateauButton.addActionListener(e -> ouvrirFenetrePlateau());
+    gbc.insets = new Insets(10, 10, 10, 10);
+    gbc.anchor = GridBagConstraints.CENTER;
 
-        JButton jouerPlateauButton = new JButton("Jouer un Plateau");
-        jouerPlateauButton.setPreferredSize(new Dimension(250, 50));
-        jouerPlateauButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jouerPlateauButton.addActionListener(e -> ouvrirFenetreSeries());
 
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(jouerPlateauButton);
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(creerPlateauButton);
-        panel.add(Box.createVerticalStrut(20));
+    JButton creerPlateauButton = new JButton("Créer un Plateau");
+    creerPlateauButton.setPreferredSize(new Dimension(250, 50));
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    creerPlateauButton.addActionListener(e -> ouvrirFenetrePlateau());
+    panel.add(creerPlateauButton, gbc);
 
-        return panel;
-    }
+
+    JButton jouerPlateauButton = new JButton("Jouer un Plateau");
+    jouerPlateauButton.setPreferredSize(new Dimension(250, 50));
+    gbc.gridy = 1;
+    jouerPlateauButton.addActionListener(e -> ouvrirFenetreSeries());
+    panel.add(jouerPlateauButton, gbc);
+
+
+    gbc.gridy = 2;
+    panel.add(Box.createVerticalStrut(20), gbc);
+
+
+    JButton retourButton = new JButton("Retour");
+    retourButton.setPreferredSize(new Dimension(200, 50));
+    gbc.gridy = 3;
+    retourButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+    retourButton.addActionListener(e -> cardLayout.show(cardPanel, "Menu"));
+    panel.add(retourButton, gbc);
+
+    return panel;
+}
+
 
     private static void ouvrirFenetreSeries() {
         JFrame seriesFrame = new JFrame("Séries Disponibles");
@@ -153,10 +169,12 @@ public class Menu {
     }
 
     private static JPanel createReglesPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
+        
+        gbc.insets = new Insets(10, 10, 10, 10);
+        
         JTextArea reglesTextArea = new JTextArea(
             "Voici les règles du jeu :\n\n" +
             "Dans Dorfromantik, vous devez créer un paysage harmonieux en posant des tuiles hexagonales représentant différents terrains :\n" +
@@ -173,6 +191,7 @@ public class Menu {
         reglesTextArea.setFont(new Font("SansSerif", Font.PLAIN, 14));
         reglesTextArea.setLineWrap(true);
         reglesTextArea.setWrapStyleWord(true);
+        reglesTextArea.setPreferredSize(new Dimension(600, 300));
 
         JScrollPane scrollPane = new JScrollPane(reglesTextArea);
         scrollPane.setBorder(null); 
@@ -182,48 +201,87 @@ public class Menu {
         retourButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         retourButton.addActionListener(e -> cardLayout.show(cardPanel, "Menu"));
 
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(scrollPane);
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(retourButton);
-        panel.add(Box.createVerticalStrut(20));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(scrollPane, gbc);
+
+        gbc.gridy = 1;
+        panel.add(retourButton, gbc);
 
         return panel;
     }
 
     private static JPanel createCommandesPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JPanel panel = new JPanel(new GridBagLayout());  
+    GridBagConstraints gbc = new GridBagConstraints();
+    panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JTextArea commandesTextArea = new JTextArea(
-            "Commandes de jeu :\n\n" +
-            "Flèche droite : fait pivoter l'hexagone de 1/6 de tour vers la droite.\n" +
-            "Flèche gauche : fait pivoter l'hexagone de 1/6 de tour vers la gauche.\n" +
-            "Clic gauche : sélectionne un emplacement pour poser une tuile.\n" +
-            "Maintien du clic droit : permet de déplacer la vue dans la fenêtre."
-        );
-        commandesTextArea.setEditable(false);
-        commandesTextArea.setFocusable(false);
-        commandesTextArea.setOpaque(false);
-        commandesTextArea.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        commandesTextArea.setLineWrap(true);
-        commandesTextArea.setWrapStyleWord(true);
+    gbc.insets = new Insets(10, 10, 10, 10);
 
-        JScrollPane scrollPane = new JScrollPane(commandesTextArea);
-        scrollPane.setBorder(null); 
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    panel.add(createImageLabel("res/arrow-right.png"), gbc);  
+    gbc.gridx = 1;
+    panel.add(createTextLabel("Flèche droite :", "Tourner l'hexagone vers la droite."), gbc);  
 
-        JButton retourButton = new JButton("Retour");
-        retourButton.setPreferredSize(new Dimension(200, 50));
-        retourButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        retourButton.addActionListener(e -> cardLayout.show(cardPanel, "Menu"));
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    panel.add(createImageLabel("res/arrow-left.png"), gbc);  
+    gbc.gridx = 1;
+    panel.add(createTextLabel("Flèche gauche :", "Tourner l'hexagone vers la gauche."), gbc);  
+    gbc.gridx = 0;
+    gbc.gridy = 2;
+    panel.add(createImageLabel("res/LeftClick.png"), gbc);  
+    gbc.gridx = 1;
+    panel.add(createTextLabel("Clic gauche :", "Sélectionner un emplacement pour poser une tuile."), gbc); 
 
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(scrollPane);
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(retourButton);
-        panel.add(Box.createVerticalStrut(20));
+    gbc.gridx = 0;
+    gbc.gridy = 3;
+    panel.add(createImageLabel("res/RightClickMove.png"), gbc); 
+    gbc.gridx = 1;
+    panel.add(createTextLabel("Maintien du clic droit :", "Déplacer la vue dans la fenêtre."), gbc); 
 
-        return panel;
+    gbc.gridx = 0;
+    gbc.gridy = 4;
+    gbc.gridwidth = 2; 
+    JButton retourButton = new JButton("Retour");
+    retourButton.setPreferredSize(new Dimension(200, 50));
+    retourButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+    retourButton.addActionListener(e -> cardLayout.show(cardPanel, "Menu"));
+    panel.add(retourButton, gbc);
+
+    return panel;
+}
+
+
+private static JLabel createImageLabel(String imagePath) {
+    JLabel imageLabel = new JLabel();
+    try {
+        ImageIcon icon = new ImageIcon(imagePath);
+        Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);  
+        imageLabel.setIcon(new ImageIcon(img));
+    } catch (Exception e) {
+        imageLabel.setText("[Image non trouvée]");  
     }
+    return imageLabel;
+}
+
+
+private static JPanel createTextLabel(String titre, String description) {
+    JPanel textPanel = new JPanel();
+    textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+    textPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+    JLabel titreLabel = new JLabel(titre);
+    titreLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+    textPanel.add(titreLabel);
+
+    JLabel descriptionLabel = new JLabel(description);
+    descriptionLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+    textPanel.add(descriptionLabel);
+
+    return textPanel;
+}
+
+
 }
