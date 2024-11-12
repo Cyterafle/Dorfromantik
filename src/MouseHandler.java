@@ -16,6 +16,10 @@ public class MouseHandler extends MouseAdapter {
             plateau.dragStartPoint = e.getPoint();
             plateau.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
         }
+
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            plateau.selectHexagon(e.getPoint());  // Sélectionne l'hexagone cliqué
+        }
     }
 
     @Override

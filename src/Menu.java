@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.*;
 
 public class Menu {
@@ -132,7 +130,6 @@ private static void ouvrirFenetreSeries() {
 
             boolean hasResults = false;
             while (rs.next()) {
-                int idSerie = rs.getInt("idSerie");
                 String nomSerie = rs.getString("nomSerie");
                 JButton seriesButton = new JButton(nomSerie);
                 seriesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
