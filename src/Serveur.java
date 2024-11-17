@@ -1,6 +1,8 @@
 import java.sql.*;
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Serveur {
 
@@ -88,19 +90,21 @@ public class Serveur {
     }
 
     // Nouvelle méthode : récupérer les tuiles pour une série donnée
-    public static void recupererTuilesPourSerie(Connection cnx, int idSerie) {
+    public static List<Tuile> recupererTuilesPourSerie(Connection cnx, int idSerie) {
         String query = "SELECT tt.idTuile, tt.idTerrain, terrain.mer, terrain.pré, terrain.champs, terrain.foret, terrain.montagne " +
                        "FROM Tuiles t " +
                        "JOIN Tuile_Terrain tt ON t.idTuile = tt.idTuile " +
                        "JOIN Terrains terrain ON tt.idTerrain = terrain.idTerrain " +
                        "WHERE t.idSerie = ?";
-
+    
+        List<Tuile> tuiles = new ArrayList<>();
+    
         try (PreparedStatement pst = cnx.prepareStatement(query)) {
             pst.setInt(1, idSerie);
             ResultSet rs = pst.executeQuery();
-
+    
             System.out.println("Tuiles pour la série ID " + idSerie + ":");
-
+    
             boolean hasResults = false;
             while (rs.next()) {
                 int idTuile = rs.getInt("idTuile");
@@ -110,17 +114,22 @@ public class Serveur {
                 int champs = rs.getInt("champs");
                 int foret = rs.getInt("foret");
                 int montagne = rs.getInt("montagne");
-
-                System.out.printf("Tuile ID: %d, Terrain ID: %d, Mer: %d, Pré: %d, Champs: %d, Forêt: %d, Montagne: %d%n",
-                        idTuile, idTerrain, mer, pré, champs, foret, montagne);
+    
+                // Ajouter la tuile à la liste
+                Tuile tuile = new Tuile(idTuile, idTerrain, mer, pré, champs, foret, montagne);
+                tuiles.add(tuile);
+    
+                System.out.println(tuile);
                 hasResults = true;
             }
-
+    
             if (!hasResults) {
                 System.out.println("Aucune tuile trouvée pour cette série.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    
+        return tuiles;
     }
 }

@@ -75,7 +75,7 @@ public void selectHexagon(Point point) {
     }
 }
 
-    @Override
+@Override
 protected void paintComponent(Graphics g) {
     super.paintComponent(g);
     Graphics2D g2d = (Graphics2D) g;
@@ -93,6 +93,9 @@ protected void paintComponent(Graphics g) {
     g2d.fill(centerHex);
     g2d.setColor(BORDER_COLOR);
     g2d.draw(centerHex);
+
+    // Ajouter des triangles dans l'hexagone central
+    drawHexTriangles(g2d, centerX, centerY, CENTER_COLOR);
 
     // Nombre d'hexagones à afficher horizontalement et verticalement
     int cols = BORDER_HEXAGONS; // Nombre d'hexagones à droite/gauche du centre
@@ -114,9 +117,12 @@ protected void paintComponent(Graphics g) {
             if (selectedHexagons.contains(new Point(x, y))) {
                 g2d.setColor(SELECTED_COLOR);
                 g2d.fill(hex);
+
+                // Dessiner les triangles dans cet hexagone
+                drawHexTriangles(g2d, x, y, SELECTED_COLOR);
             }
 
-            // Vérifier si cet hexagone est adjacent à un hexagone coloré (central ou sélectionné)
+            // Si cet hexagone est adjacent à un hexagone coloré (central ou sélectionné), afficher uniquement le contour
             if (isAdjacentToColoredHexagon(x, y, centerX, centerY)) {
                 g2d.setColor(BORDER_COLOR);
                 g2d.draw(hex);
@@ -124,6 +130,35 @@ protected void paintComponent(Graphics g) {
         }
     }
 }
+
+
+// Méthode pour dessiner les triangles dans un hexagone
+private void drawHexTriangles(Graphics2D g2d, int x, int y, Color baseColor) {
+    // Coordonnées des sommets de l'hexagone
+    double[] xPoints = new double[6];
+    double[] yPoints = new double[6];
+    for (int i = 0; i < 6; i++) {
+        double angle = Math.toRadians(60 * i);
+        xPoints[i] = x + HEX_SIZE * Math.cos(angle);
+        yPoints[i] = y + HEX_SIZE * Math.sin(angle);
+    }
+
+    // Dessiner chaque triangle
+    for (int i = 0; i < 6; i++) {
+        int next = (i + 1) % 6;
+        Polygon triangle = new Polygon();
+        triangle.addPoint(x, y); // Centre de l'hexagone
+        triangle.addPoint((int) xPoints[i], (int) yPoints[i]); // Premier sommet
+        triangle.addPoint((int) xPoints[next], (int) yPoints[next]); // Sommet suivant
+
+        // Définir une couleur pour chaque triangle
+        g2d.setColor(baseColor.darker().brighter());
+        g2d.fill(triangle);
+        g2d.setColor(BORDER_COLOR);
+        g2d.draw(triangle);
+    }
+}
+
 
 // Méthode pour vérifier si un hexagone est adjacent à un hexagone coloré
 private boolean isAdjacentToColoredHexagon(int x, int y, int centerX, int centerY) {
