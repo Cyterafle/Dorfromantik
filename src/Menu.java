@@ -6,13 +6,35 @@ public class Menu {
     private static JFrame frame;
     private static CardLayout cardLayout;
     private static JPanel cardPanel;
+    private static Connection connection; // Connexion à la base de données
+
 
     public static void main(String[] args) {
-        frame = new JFrame("Menu");
-        frame.setSize(800, 600);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        try {
+            // Initialisation de la connexion à la base de données
+            connection = DriverManager.getConnection(
+                "jdbc:mariadb://dwarves.iut-fbleau.fr/siuda", "siuda", "Siuda77140"
+            );
 
-        frame.setLocationRelativeTo(null);
+            frame = new JFrame("Menu");
+            frame.setSize(800, 600);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setLocationRelativeTo(null);
+
+            // Ajout d'un listener pour fermer la connexion à la fermeture de la fenêtre
+            frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    try {
+                        if (connection != null && !connection.isClosed()) {
+                            connection.close();
+                            System.out.println("Connexion à la base de données fermée.");
+                        }
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
 
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
@@ -32,6 +54,10 @@ public class Menu {
         frame.add(cardPanel);
 
         frame.setVisible(true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Impossible de se connecter à la base de données.", "Erreur", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private static JPanel createMenuPanel() {
@@ -123,12 +149,14 @@ public class Menu {
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
         buttonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        try (Connection cnx = DriverManager.getConnection("jdbc:mariadb://dwarves.iut-fbleau.fr/siuda", "siuda", "Siuda77140")) {
-            Serveur.afficherSeries(cnx, buttonsPanel, seriesFrame, Menu::ouvrirFenetrePlateau);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (connection != null) {
+            Serveur.afficherSeries(connection, buttonsPanel, seriesFrame, Menu::ouvrirFenetrePlateau);
+        } else {
+            JLabel errorLabel = new JLabel("Erreur : Connexion à la base de données indisponible.");
+            errorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            buttonsPanel.add(errorLabel);
         }
-
+        
         JScrollPane scrollPane = new JScrollPane(buttonsPanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         mainPanel.add(scrollPane);
