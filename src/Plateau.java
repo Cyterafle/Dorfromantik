@@ -151,8 +151,14 @@ private void drawHexTriangles(Graphics2D g2d, int x, int y, Color baseColor) {
         triangle.addPoint((int) xPoints[i], (int) yPoints[i]); // Premier sommet
         triangle.addPoint((int) xPoints[next], (int) yPoints[next]); // Sommet suivant
 
+        // Le premier triangle est jaune
+        if (i == 0) {
+            g2d.setColor(Color.YELLOW);
+        } else {
+            g2d.setColor(baseColor.darker().brighter());
+        }
+
         // Définir une couleur pour chaque triangle
-        g2d.setColor(baseColor.darker().brighter());
         g2d.fill(triangle);
         g2d.setColor(BORDER_COLOR);
         g2d.draw(triangle);
