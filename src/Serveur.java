@@ -9,7 +9,6 @@ public class Serveur {
         try (Connection cnx = DriverManager.getConnection("jdbc:mariadb://dwarves.iut-fbleau.fr/siuda", "siuda", "Siuda77140")) {
 
             // Appel des différentes fonctions selon les besoins
-            afficherSeries((cnx), new JPanel()); // Afficher toutes les séries disponibles
             afficherScoresPourSerie(cnx, 1); // Afficher les scores pour une série donnée (ex : série avec ID 1)
 
         } catch (SQLException e) {
@@ -17,39 +16,43 @@ public class Serveur {
         }
     }
 
-    // Fonction pour afficher toutes les séries créées sous forme de boutons
-    public static void afficherSeries(Connection cnx, JPanel panel) {
-        String query = "SELECT nomSerie FROM Series";
-    
+
+    // Fonction pour afficher toutes les séries disponibles sous forme de boutons
+    public static void afficherSeries(Connection cnx, JPanel buttonsPanel, JFrame parentFrame, Runnable onSelection) {
+        String query = "SELECT idSerie, nomSerie FROM Series";
+
         try (PreparedStatement pst = cnx.prepareStatement(query);
-             ResultSet rs = pst.executeQuery()) {
-    
+            ResultSet rs = pst.executeQuery()) {
+
             boolean hasResults = false;
-    
+
             while (rs.next()) {
                 String nomSerie = rs.getString("nomSerie");
                 JButton seriesButton = new JButton(nomSerie);
-                seriesButton.setAlignmentX(Component.CENTER_ALIGNMENT); // Centrer le bouton horizontalement
-    
+                seriesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
                 // Ajouter un ActionListener pour gérer le clic sur le bouton
                 seriesButton.addActionListener(e -> {
-                    JOptionPane.showMessageDialog(panel, "Vous avez sélectionné la série : " + nomSerie);
+                    JOptionPane.showMessageDialog(parentFrame, "Vous avez sélectionné la série : " + nomSerie);
+                    parentFrame.dispose(); // Fermer la fenêtre parent
+                    onSelection.run();    // Exécuter l'action après la sélection
                 });
-    
-                panel.add(seriesButton);
-                panel.add(Box.createVerticalStrut(10)); // Espacement entre les boutons
+
+                buttonsPanel.add(seriesButton);
+                buttonsPanel.add(Box.createVerticalStrut(10)); // Espacement entre les boutons
                 hasResults = true;
             }
-    
+
             if (!hasResults) {
-                JLabel label = new JLabel("Aucune série disponible.");
-                label.setAlignmentX(Component.CENTER_ALIGNMENT); // Centrer le label
-                panel.add(label);
+                JLabel noSeriesLabel = new JLabel("Aucune série disponible.");
+                noSeriesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                buttonsPanel.add(noSeriesLabel);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
     
     
 

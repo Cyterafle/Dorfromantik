@@ -74,95 +74,69 @@ public class Menu {
     }
 
     private static JPanel createJouerPanel() {
-    JPanel panel = new JPanel(new GridBagLayout()); 
-    GridBagConstraints gbc = new GridBagConstraints();
-    panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel panel = new JPanel(new GridBagLayout()); 
+        GridBagConstraints gbc = new GridBagConstraints();
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    gbc.insets = new Insets(10, 10, 10, 10);
-    gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.CENTER;
 
-    JButton jouerPlateauButton = new JButton("Jouer un Plateau");
-    jouerPlateauButton.setPreferredSize(new Dimension(250, 50));
-    gbc.gridy = 1;
-    jouerPlateauButton.addActionListener(e -> ouvrirFenetreSeries());
-    panel.add(jouerPlateauButton, gbc);
-
-
-    gbc.gridy = 2;
-    panel.add(Box.createVerticalStrut(20), gbc);
+        JButton jouerPlateauButton = new JButton("Jouer un Plateau");
+        jouerPlateauButton.setPreferredSize(new Dimension(250, 50));
+        gbc.gridy = 1;
+        jouerPlateauButton.addActionListener(e -> ouvrirFenetreSeries());
+        panel.add(jouerPlateauButton, gbc);
 
 
-    JButton retourButton = new JButton("Retour");
-    retourButton.setPreferredSize(new Dimension(200, 50));
-    gbc.gridy = 3;
-    retourButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-    retourButton.addActionListener(e -> cardLayout.show(cardPanel, "Menu"));
-    panel.add(retourButton, gbc);
-
-    return panel;
-}
+        gbc.gridy = 2;
+        panel.add(Box.createVerticalStrut(20), gbc);
 
 
-private static void ouvrirFenetreSeries() {
-    JFrame seriesFrame = new JFrame("Séries Disponibles");
-    seriesFrame.setSize(400, 500);
-    seriesFrame.setLocationRelativeTo(null);
-    seriesFrame.setLayout(new BorderLayout());
+        JButton retourButton = new JButton("Retour");
+        retourButton.setPreferredSize(new Dimension(200, 50));
+        gbc.gridy = 3;
+        retourButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        retourButton.addActionListener(e -> cardLayout.show(cardPanel, "Menu"));
+        panel.add(retourButton, gbc);
 
-    JPanel mainPanel = new JPanel();
-    mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-
-    JLabel label = new JLabel("Choisissez une série");
-    label.setAlignmentX(Component.CENTER_ALIGNMENT);
-    label.setFont(new Font("Arial", Font.BOLD, 16));
-    mainPanel.add(Box.createVerticalStrut(20));
-    mainPanel.add(label);
-    mainPanel.add(Box.createVerticalStrut(20));
-
-    JPanel buttonsPanel = new JPanel();
-    buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
-    buttonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-    try (Connection cnx = DriverManager.getConnection("jdbc:mariadb://dwarves.iut-fbleau.fr/siuda", "siuda", "Siuda77140")) {
-        String query = "SELECT idSerie, nomSerie FROM Series";
-        try (PreparedStatement pst = cnx.prepareStatement(query);
-             ResultSet rs = pst.executeQuery()) {
-
-            boolean hasResults = false;
-            while (rs.next()) {
-                String nomSerie = rs.getString("nomSerie");
-                JButton seriesButton = new JButton(nomSerie);
-                seriesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-                // Ajouter un ActionListener pour gérer le clic sur le bouton
-                seriesButton.addActionListener(e -> {
-                    JOptionPane.showMessageDialog(seriesFrame, "Vous avez sélectionné la série : " + nomSerie);
-                    seriesFrame.dispose(); // Fermer la fenêtre des séries
-                    ouvrirFenetrePlateau(); // Ouvrir la fenêtre du plateau
-                });
-
-                buttonsPanel.add(seriesButton);
-                buttonsPanel.add(Box.createVerticalStrut(10)); // Espacement entre les boutons
-                hasResults = true;
-            }
-
-            if (!hasResults) {
-                JLabel noSeriesLabel = new JLabel("Aucune série disponible.");
-                noSeriesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-                buttonsPanel.add(noSeriesLabel);
-            }
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return panel;
     }
 
-    JScrollPane scrollPane = new JScrollPane(buttonsPanel);
-    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    mainPanel.add(scrollPane);
 
-    seriesFrame.add(mainPanel, BorderLayout.CENTER);
-    seriesFrame.setVisible(true);
-}
+    private static void ouvrirFenetreSeries() {
+        JFrame seriesFrame = new JFrame("Séries Disponibles");
+        seriesFrame.setSize(400, 500);
+        seriesFrame.setLocationRelativeTo(null);
+        seriesFrame.setLayout(new BorderLayout());
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
+        JLabel label = new JLabel("Choisissez une série");
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        label.setFont(new Font("Arial", Font.BOLD, 16));
+        mainPanel.add(Box.createVerticalStrut(20));
+        mainPanel.add(label);
+        mainPanel.add(Box.createVerticalStrut(20));
+
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
+        buttonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        try (Connection cnx = DriverManager.getConnection("jdbc:mariadb://dwarves.iut-fbleau.fr/siuda", "siuda", "Siuda77140")) {
+            Serveur.afficherSeries(cnx, buttonsPanel, seriesFrame, Menu::ouvrirFenetrePlateau);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        JScrollPane scrollPane = new JScrollPane(buttonsPanel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        mainPanel.add(scrollPane);
+
+        seriesFrame.add(mainPanel, BorderLayout.CENTER);
+        seriesFrame.setVisible(true);
+    }
+
 
 
     private static void ouvrirFenetrePlateau() {
@@ -229,76 +203,74 @@ private static void ouvrirFenetreSeries() {
     }
 
     private static JPanel createCommandesPanel() {
-    JPanel panel = new JPanel(new GridBagLayout());  
-    GridBagConstraints gbc = new GridBagConstraints();
-    panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel panel = new JPanel(new GridBagLayout());  
+        GridBagConstraints gbc = new GridBagConstraints();
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(10, 10, 10, 10);
 
-    gbc.gridx = 0;
-    gbc.gridy = 0;
-    panel.add(createImageLabel("res/arrow-right.png"), gbc);  
-    gbc.gridx = 1;
-    panel.add(createTextLabel("Flèche droite :", "Tourner l'hexagone vers la droite."), gbc);  
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(createImageLabel("res/arrow-right.png"), gbc);  
+        gbc.gridx = 1;
+        panel.add(createTextLabel("Flèche droite :", "Tourner l'hexagone vers la droite."), gbc);  
 
-    gbc.gridx = 0;
-    gbc.gridy = 1;
-    panel.add(createImageLabel("res/arrow-left.png"), gbc);  
-    gbc.gridx = 1;
-    panel.add(createTextLabel("Flèche gauche :", "Tourner l'hexagone vers la gauche."), gbc);  
-    gbc.gridx = 0;
-    gbc.gridy = 2;
-    panel.add(createImageLabel("res/LeftClick.png"), gbc);  
-    gbc.gridx = 1;
-    panel.add(createTextLabel("Clic gauche :", "Sélectionner un emplacement pour poser une tuile."), gbc); 
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(createImageLabel("res/arrow-left.png"), gbc);  
+        gbc.gridx = 1;
+        panel.add(createTextLabel("Flèche gauche :", "Tourner l'hexagone vers la gauche."), gbc);  
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(createImageLabel("res/LeftClick.png"), gbc);  
+        gbc.gridx = 1;
+        panel.add(createTextLabel("Clic gauche :", "Sélectionner un emplacement pour poser une tuile."), gbc); 
 
-    gbc.gridx = 0;
-    gbc.gridy = 3;
-    panel.add(createImageLabel("res/RightClickMove.png"), gbc); 
-    gbc.gridx = 1;
-    panel.add(createTextLabel("Maintien du clic droit :", "Déplacer la vue dans la fenêtre."), gbc); 
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panel.add(createImageLabel("res/RightClickMove.png"), gbc); 
+        gbc.gridx = 1;
+        panel.add(createTextLabel("Maintien du clic droit :", "Déplacer la vue dans la fenêtre."), gbc); 
 
-    gbc.gridx = 0;
-    gbc.gridy = 4;
-    gbc.gridwidth = 2; 
-    JButton retourButton = new JButton("Retour");
-    retourButton.setPreferredSize(new Dimension(200, 50));
-    retourButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-    retourButton.addActionListener(e -> cardLayout.show(cardPanel, "Menu"));
-    panel.add(retourButton, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2; 
+        JButton retourButton = new JButton("Retour");
+        retourButton.setPreferredSize(new Dimension(200, 50));
+        retourButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        retourButton.addActionListener(e -> cardLayout.show(cardPanel, "Menu"));
+        panel.add(retourButton, gbc);
 
-    return panel;
-}
-
-
-private static JLabel createImageLabel(String imagePath) {
-    JLabel imageLabel = new JLabel();
-    try {
-        ImageIcon icon = new ImageIcon(imagePath);
-        Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);  
-        imageLabel.setIcon(new ImageIcon(img));
-    } catch (Exception e) {
-        imageLabel.setText("[Image non trouvée]");  
+        return panel;
     }
-    return imageLabel;
-}
 
 
-private static JPanel createTextLabel(String titre, String description) {
-    JPanel textPanel = new JPanel();
-    textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-    textPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-    JLabel titreLabel = new JLabel(titre);
-    titreLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
-    textPanel.add(titreLabel);
-
-    JLabel descriptionLabel = new JLabel(description);
-    descriptionLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
-    textPanel.add(descriptionLabel);
-
-    return textPanel;
-}
+    private static JLabel createImageLabel(String imagePath) {
+        JLabel imageLabel = new JLabel();
+        try {
+            ImageIcon icon = new ImageIcon(imagePath);
+            Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);  
+            imageLabel.setIcon(new ImageIcon(img));
+        } catch (Exception e) {
+            imageLabel.setText("[Image non trouvée]");  
+        }
+        return imageLabel;
+    }
 
 
+    private static JPanel createTextLabel(String titre, String description) {
+        JPanel textPanel = new JPanel();
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+        textPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel titreLabel = new JLabel(titre);
+        titreLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+        textPanel.add(titreLabel);
+
+        JLabel descriptionLabel = new JLabel(description);
+        descriptionLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        textPanel.add(descriptionLabel);
+
+        return textPanel;
+    }
 }
