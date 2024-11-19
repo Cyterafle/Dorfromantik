@@ -1,0 +1,2 @@
+Main-Class: fr.iutfbleau.dick.siuda.paysages.Main
+Class-Path: mariadb-client.jar

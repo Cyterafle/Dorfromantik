@@ -1,3 +1,7 @@
+package fr.iutfbleau.dick.siuda.paysages.controllers;
+
+import fr.iutfbleau.dick.siuda.paysages.views.PlateauPanel;
+
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseMotionAdapter;
@@ -6,21 +10,21 @@ import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
 public class MouseMotionHandler extends MouseMotionAdapter {
-    private final Plateau plateau;
+    private final PlateauPanel plateau;
 
-    public MouseMotionHandler(Plateau plateau) {
+    public MouseMotionHandler(PlateauPanel plateau) {
         this.plateau = plateau;
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if (plateau.dragStartPoint != null) {
+        if (plateau.getDragStartPoint() != null) {
             Point dragEndPoint = e.getPoint();
             JViewport viewport = (JViewport) SwingUtilities.getAncestorOfClass(JViewport.class, plateau);
 
             if (viewport != null) {
-                int deltaX = plateau.dragStartPoint.x - dragEndPoint.x;
-                int deltaY = plateau.dragStartPoint.y - dragEndPoint.y;
+                int deltaX = (int) plateau.getDragStartPoint().getX() - dragEndPoint.x;
+                int deltaY = (int) plateau.getDragStartPoint().getY() - dragEndPoint.y;
                 Point viewPosition = viewport.getViewPosition();
                 viewPosition.translate(deltaX, deltaY);
                 plateau.scrollRectToVisible(new Rectangle(viewPosition, viewport.getSize()));

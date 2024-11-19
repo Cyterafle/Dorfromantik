@@ -1,3 +1,5 @@
+package fr.iutfbleau.dick.siuda.paysages.models;
+
 class Tuile {
     private int idTuile;
     private int idTerrain;
@@ -23,5 +25,4 @@ class Tuile {
                 idTuile, idTerrain, mer, pré, champs, foret, montagne);
     }
 
-    // Ajoutez des getters si nécessaire
 }
