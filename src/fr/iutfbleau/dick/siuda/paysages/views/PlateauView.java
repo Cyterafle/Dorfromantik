@@ -2,13 +2,15 @@ package fr.iutfbleau.dick.siuda.paysages.views;
 import java.awt.*;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import java.util.List;
+import fr.iutfbleau.dick.siuda.paysages.models.*;
 
 public class PlateauView extends JFrame {
     private PlateauPanel panel;
     private static final int HEX_SIZE = 40; // Taille du côté de l'hexagone
     private static final int BORDER_HEXAGONS = 50;
-    public PlateauView(){
-        panel = new PlateauPanel();
+    public PlateauView(List<Tuile> tuiles){
+        panel = new PlateauPanel(tuiles);
         this.setTitle("Dorfromantik - Plateau");
         this.add(panel);
         int preferredWidth = (2 * BORDER_HEXAGONS + 1) * (int) (HEX_SIZE * 3 / 2);

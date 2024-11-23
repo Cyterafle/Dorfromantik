@@ -11,7 +11,8 @@ import fr.iutfbleau.dick.siuda.paysages.views.PlateauView;
 
 public class PlateauModel {
     private Connection cnx;
-    public PlateauModel(PlateauView view){
+    private PlateauView view;
+    public PlateauModel(){
         cnx = Connexion.getInstance().getCnx();
     }
 
@@ -28,7 +29,6 @@ public class PlateauModel {
             pst.setInt(1, idSerie);
             ResultSet rs = pst.executeQuery();
     
-            System.out.println("Tuiles pour la série ID " + idSerie + ":");
     
             boolean hasResults = false;
             while (rs.next()) {
@@ -43,8 +43,6 @@ public class PlateauModel {
                 // Ajouter la tuile à la liste
                 Tuile tuile = new Tuile(idTuile, idTerrain, mer, pré, champs, foret, montagne);
                 tuiles.add(tuile);
-    
-                System.out.println(tuile);
                 hasResults = true;
             }
     

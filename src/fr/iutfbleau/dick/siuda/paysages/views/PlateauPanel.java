@@ -2,11 +2,14 @@ package fr.iutfbleau.dick.siuda.paysages.views;
 
 import javax.swing.*;
 
+import fr.iutfbleau.dick.siuda.paysages.models.Tuile;
 
+import fr.iutfbleau.dick.siuda.paysages.models.*;
 import java.awt.*;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PlateauPanel extends JPanel {
     private static final int HEX_SIZE = 40; // Taille du côté de l'hexagone
@@ -16,8 +19,14 @@ public class PlateauPanel extends JPanel {
     private static final Color SELECTED_COLOR = Color.BLUE; // Couleur de l'hexagone sélectionné
     private Point dragStartPoint = null; // Point de départ pour le déplacement
     private List<Point> selectedHexagons = new ArrayList<>(); // Liste pour suivre les hexagones sélectionnés
+    private List<Tuile> tuiles;
+    private int currentTuile;
 
-    public PlateauPanel() {}
+
+    public PlateauPanel(List<Tuile> tuiles) {
+        this.tuiles = tuiles;
+        this.currentTuile = 0;
+    }
 
     // Méthode pour dessiner un hexagone à une position donnée
     public Path2D.Double createHexagon(int x, int y) {
@@ -46,6 +55,10 @@ public class PlateauPanel extends JPanel {
     public void selectHexagon(Point point) {
         int hexHeight = (int) (Math.sqrt(3) * HEX_SIZE);
         Dimension size = getSize();
+        if (currentTuile <= 48){
+            ++currentTuile;
+            System.out.println(currentTuile);
+        }
 
         int centerX = size.width / 2;
         int centerY = size.height / 2;
@@ -96,7 +109,7 @@ public class PlateauPanel extends JPanel {
         g2d.draw(centerHex);
 
         // Ajouter des triangles dans l'hexagone central
-        drawHexTriangles(g2d, centerX, centerY, CENTER_COLOR);
+        drawHexTriangles(g2d, centerX, centerY, tuiles.get(0));
 
         // Nombre d'hexagones à afficher horizontalement et verticalement
         int cols = BORDER_HEXAGONS; // Nombre d'hexagones à droite/gauche du centre
@@ -120,8 +133,7 @@ public class PlateauPanel extends JPanel {
                     g2d.setColor(SELECTED_COLOR);
                     g2d.fill(hex);
 
-                    // Dessiner les triangles dans cet hexagone
-                    drawHexTriangles(g2d, x, y, SELECTED_COLOR);
+                    drawHexTriangles(g2d, x, y, tuiles.get(currentTuile));
                 }
 
                 // Si cet hexagone est adjacent à un hexagone coloré (central ou sélectionné),
@@ -135,10 +147,13 @@ public class PlateauPanel extends JPanel {
     }
 
     // Méthode pour dessiner les triangles dans un hexagone
-    private void drawHexTriangles(Graphics2D g2d, int x, int y, Color baseColor) {
+    private void drawHexTriangles(Graphics2D g2d, int x, int y, Tuile tuile) {
         // Coordonnées des sommets de l'hexagone
         double[] xPoints = new double[6];
         double[] yPoints = new double[6];
+        int j = 0, lastPoint = -1, slice = 0;
+        Terrains terrain = Terrains.values()[0];
+        int[] typeTerr = tuile.getRepartitionTerrains();
         for (int i = 0; i < 6; i++) {
             double angle = Math.toRadians(60 * i);
             xPoints[i] = x + HEX_SIZE * Math.cos(angle);
@@ -152,19 +167,25 @@ public class PlateauPanel extends JPanel {
             triangle.addPoint(x, y); // Centre de l'hexagone
             triangle.addPoint((int) xPoints[i], (int) yPoints[i]); // Premier sommet
             triangle.addPoint((int) xPoints[next], (int) yPoints[next]); // Sommet suivant
-
-            // Le premier triangle est jaune
-            if (i == 0) {
-                g2d.setColor(Color.YELLOW);
-            } else {
-                g2d.setColor(baseColor.darker().brighter());
+            if (slice == 0){
+                while (typeTerr[j] == 0 | j == lastPoint)
+                    ++j;
+                slice = typeTerr[j];
+                lastPoint = j;
+                terrain = Terrains.values()[j];
             }
-
+            try{
+                g2d.setColor(terrain.getColor());
+            } catch (NullPointerException ex) {
+                //TODO
+            }
+            --slice;
             // Définir une couleur pour chaque triangle
             g2d.fill(triangle);
             g2d.setColor(BORDER_COLOR);
             g2d.draw(triangle);
         }
+        
     }
 
     // Méthode pour vérifier si un hexagone est adjacent à un hexagone coloré

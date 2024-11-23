@@ -26,7 +26,7 @@ public class MenuController {
             item.addActionListener(e -> {
                     JOptionPane.showMessageDialog(view.getSeriesFrame(), "Vous avez sélectionné la série : " + item.getText());
                     view.getSeriesFrame().dispose(); // Fermer la fenêtre parent
-                    new PlateauController();
+                    new PlateauController(itemSet.getKey());
                 });
         }
     }

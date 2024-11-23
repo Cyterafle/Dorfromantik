@@ -7,9 +7,9 @@ import fr.iutfbleau.dick.siuda.paysages.views.*;
 public class PlateauController {
     private PlateauView frame;
     private PlateauModel model;
-    public PlateauController(){
-        frame = new PlateauView();
-        model = new PlateauModel(frame);
+    public PlateauController(int idSerie){
+        model = new PlateauModel();
+        frame = new PlateauView(model.recupererTuilesPourSerie(idSerie));
         PanelListener();
     }
 
