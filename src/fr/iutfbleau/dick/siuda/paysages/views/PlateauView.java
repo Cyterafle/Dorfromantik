@@ -22,6 +22,7 @@ public class PlateauView extends JFrame {
         scrollPane.getViewport().setViewPosition(new Point(centerX, centerY));
         this.add(scrollPane);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setSize(800, 800);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }

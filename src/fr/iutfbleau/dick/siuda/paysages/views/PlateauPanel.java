@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class PlateauPanel extends JPanel {
     private static final int HEX_SIZE = 40; // Taille du côté de l'hexagone
@@ -19,6 +18,7 @@ public class PlateauPanel extends JPanel {
     private List<Point> selectedHexagons = new ArrayList<>(); // Liste pour suivre les hexagones sélectionnés
     private List<Tuile> tuiles;
     private int currentTuile;
+    private int index;
 
 
     public PlateauPanel(List<Tuile> tuiles) {
@@ -98,13 +98,6 @@ public class PlateauPanel extends JPanel {
         int centerX = size.width / 2;
         int centerY = size.height / 2;
 
-        /*// Dessiner et remplir l'hexagone central en bleu
-        g2d.setColor(CENTER_COLOR);
-        Path2D.Double centerHex = createHexagon(centerX, centerY);
-        g2d.fill(centerHex);
-        g2d.setColor(BORDER_COLOR);
-        g2d.draw(centerHex);*/
-
         // Ajouter des triangles dans l'hexagone central
         drawHexTriangles(g2d, centerX, centerY, tuiles.get(0));
 
@@ -128,7 +121,7 @@ public class PlateauPanel extends JPanel {
                 // Si cet hexagone est sélectionné, on le colorie en bleu
                 if (selectedHexagons.contains(new Point(x, y))) {
                     g2d.fill(hex);
-                    int index = selectedHexagons.indexOf(new Point(x, y));
+                    index = selectedHexagons.indexOf(new Point(x, y));
                     if (index < 49)
                         drawHexTriangles(g2d, x, y, tuiles.get(index+1));
                 }
@@ -209,5 +202,9 @@ public class PlateauPanel extends JPanel {
 
     public void setDragStartPoint(Point p){
         dragStartPoint = p;
+    }
+
+    public int getTuilesListSize(){
+        return selectedHexagons.size();
     }
 }

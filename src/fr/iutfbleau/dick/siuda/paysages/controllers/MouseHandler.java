@@ -10,13 +10,16 @@ import javax.swing.SwingUtilities;
 
 public class MouseHandler extends MouseAdapter {
     private final PlateauPanel plateau;
+    private final PlateauController controller;
 
-    public MouseHandler(PlateauPanel plateau) {
+    public MouseHandler(PlateauPanel plateau, PlateauController controller) {
         this.plateau = plateau;
+        this.controller = controller;
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(MouseEvent e) { 
+
         if (SwingUtilities.isRightMouseButton(e)) {
             plateau.setDragStartPoint(e.getPoint());
             plateau.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
@@ -24,6 +27,9 @@ public class MouseHandler extends MouseAdapter {
 
         if (SwingUtilities.isLeftMouseButton(e)) {
             plateau.selectHexagon(e.getPoint()); // Sélectionne l'hexagone cliqué
+            if (plateau.getTuilesListSize() == 49){
+                controller.endGame();
+            }
         }
     }
 
