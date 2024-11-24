@@ -59,4 +59,12 @@ public class PlateauModel {
     
         return tuiles;
     }
+
+    public void setView(PlateauView view){
+        this.view = view; 
+    }
+
+    public Tuile getNexTuile(){
+        return view.getPanel().getNextTuile();
+    }
 }

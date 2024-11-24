@@ -20,6 +20,7 @@ public class PlateauView extends JFrame {
         int preferredWidth = (2 * BORDER_HEXAGONS + 1) * (int) (HEX_SIZE * 3 / 2);
         int preferredHeight = (2 * BORDER_HEXAGONS + 1) * (int) (Math.sqrt(3) * HEX_SIZE);
         panel.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
+        infos.setPreferredSize(new Dimension(200, MAXIMIZED_VERT));
         JScrollPane scrollPane = new JScrollPane(panel);
         int centerX = (preferredWidth / 2) - (800 / 2);
         int centerY = (preferredHeight / 2) - (600 / 2);
@@ -30,7 +31,7 @@ public class PlateauView extends JFrame {
         add(jsp);
         setVisible(true);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        this.setSize(800, 800);
+        this.setSize(1200, 800);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }

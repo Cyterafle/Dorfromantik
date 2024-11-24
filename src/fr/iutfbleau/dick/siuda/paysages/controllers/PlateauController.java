@@ -14,7 +14,9 @@ public class PlateauController {
         model = new PlateauModel();
         this.idSerie = idSerie;
         frame = new PlateauView(model.recupererTuilesPourSerie(idSerie));
+        model.setView(frame);
         PanelListener();
+        frame.addKeyListener(new KeyHandler(model, this));
     }
 
     private void PanelListener(){

@@ -67,7 +67,7 @@ public class PlateauPanel extends JPanel {
                 int x = centerX + col * HEX_SIZE * 3 / 2;
                 int y = centerY + row * hexHeight + (col % 2) * (hexHeight / 2);
 
-                // Ne pas vérifier l'hexagone central
+                // Ne pas vérifier les hexagones placés
                 if (col == 0 && row == 0 || selectedHexagons.contains(new Point(x, y)))
                     continue;
 
@@ -152,10 +152,11 @@ public class PlateauPanel extends JPanel {
 
         // Dessiner chaque triangle
         for (int i = 0; i < 6; i++) {
-            int next = (i + 1) % 6;
+            int actuel = (6 + (i + tuile.getOrientation())) %6;
+            int next = (actuel + 1)%6;
             Polygon triangle = new Polygon();
             triangle.addPoint(x, y); // Centre de l'hexagone
-            triangle.addPoint((int) xPoints[i], (int) yPoints[i]); // Premier sommet
+            triangle.addPoint((int) xPoints[actuel], (int) yPoints[actuel]); // Premier sommet
             triangle.addPoint((int) xPoints[next], (int) yPoints[next]); // Sommet suivant
             if (slice == 0){
                 while (typeTerr[j] == 0 | j == lastPoint)
@@ -215,5 +216,12 @@ public class PlateauPanel extends JPanel {
         }else{
             drawHexTriangles(g, x, y, tuiles.get(currentTuile));
         }
+    }
+
+    public Tuile getNextTuile(){
+        if (currentTuile <= 48)
+            return tuiles.get(currentTuile+1);
+        return null;
+
     }
 }
