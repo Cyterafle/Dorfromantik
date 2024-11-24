@@ -7,15 +7,66 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.util.*;
 
+/**
+ * La classe <code>MenuView</code> gère l'interface utilisateur pour le menu principal de l'application.
+ * <p>
+ * Cette classe utilise un système de cartes (<code>CardLayout</code>) pour naviguer entre différentes vues :
+ * <ul>
+ *   <li>Le menu principal</li>
+ *   <li>Le panneau de jeu</li>
+ *   <li>Le panneau des règles</li>
+ *   <li>Le panneau des commandes</li>
+ * </ul>
+ * Elle fournit également une fenêtre secondaire pour afficher une liste de séries disponibles.
+ * </p>
+ *
+ * @version 1.0
+ * @author Siuda Matéo
+ * @author Dick Adrien
+ */
 public class MenuView {
+    /**
+     * Fenêtre principale de l'application.
+     */
     private JFrame frame;
+
+    /**
+     * Gestionnaire de disposition pour alterner entre les différentes vues.
+     */
     private CardLayout cardLayout;
+
+    /**
+     * Panneau principal contenant les différentes vues.
+     */
     private JPanel cardPanel;
+
+    /**
+     * Bouton permettant de jouer à un plateau.
+     */
     private JButton jouerPlateauButton;
+
+    /**
+     * Bouton de retour depuis la vue des règles vers le menu principal.
+     */
     private JButton reglesRetourButton;
+
+    /**
+     * Bouton de retour depuis la vue des commandes vers le menu principal.
+     */
     private JButton commandesRetourButton;
+
+    /**
+     * Fenêtre secondaire pour afficher les séries disponibles.
+     */
     private JFrame seriesFrame;
 
+    /**
+     * Constructeur de la classe <code>MenuView</code>.
+     * <p>
+     * Initialise l'interface utilisateur, configure les panneaux et les boutons, 
+     * et affiche la fenêtre principale.
+     * </p>
+     */
     public MenuView() {
         frame = new JFrame("Menu");
         frame.setSize(800, 600);
@@ -43,6 +94,11 @@ public class MenuView {
 
     }
 
+    /**
+     * Crée et configure le panneau du menu principal.
+     * 
+     * @return Le panneau du menu principal.
+     */
     private JPanel createMenuPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -82,6 +138,11 @@ public class MenuView {
         return panel;
     }
 
+    /**
+     * Crée et configure le panneau de la vue "Jouer".
+     * 
+     * @return Le panneau de la vue "Jouer".
+     */
     private JPanel createJouerPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -108,6 +169,12 @@ public class MenuView {
         return panel;
     }
 
+    /**
+     * Ouvre une fenêtre secondaire pour afficher les séries disponibles.
+     * 
+     * @param series Une map contenant les séries, avec leur ID comme clé et leur nom comme valeur.
+     * @return Une map contenant les boutons associés aux séries.
+     */
     public Map<Integer, JButton> ouvrirFenetreSeries(Map<Integer, String> series) {
         seriesFrame = new JFrame("Séries Disponibles");
         Map<Integer, JButton> seriesMap = new HashMap<>();
@@ -145,6 +212,11 @@ public class MenuView {
         return seriesMap;
     }
 
+    /**
+     * Crée et configure le panneau des règles.
+     * 
+     * @return Le panneau des règles.
+     */
     private JPanel createReglesPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -188,6 +260,11 @@ public class MenuView {
         return panel;
     }
 
+    /**
+     * Crée et configure le panneau des commandes possibles pendant le jeux.
+     * 
+     * @return Le panneau des commandes.
+     */
     private JPanel createCommandesPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -245,6 +322,11 @@ public class MenuView {
         return panel;
     }
 
+    /**
+     * Crée et configure les images du panneau commande.
+     * 
+     * @return Le chemin des images.
+     */
     private JLabel createImageLabel(URL imagePath) {
         JLabel imageLabel = new JLabel();
         try {
@@ -256,6 +338,11 @@ public class MenuView {
         return imageLabel;
     }
 
+    /**
+     * Crée et configure les textes.
+     * 
+     * @return Les titres et les descriptions.
+     */
     private JPanel createTextLabel(String titre, String description) {
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
@@ -272,30 +359,51 @@ public class MenuView {
         return textPanel;
     }
 
+    /**
+     * Accesseur pour les boutons et éléments de la vue.
+     */
     public JButton getJouerPlateauButton() {
         return jouerPlateauButton;
     }
 
+    /**
+     * Accesseur pour les boutons et éléments de la vue.
+     */
     public JButton getCommandesRetourButton() {
         return commandesRetourButton;
     }
 
+    /**
+     * Accesseur pour les boutons et éléments de la vue.
+     */
     public JButton getReglesRetourButton() {
         return reglesRetourButton;
     }
 
+    /**
+     * Accesseur pour les boutons et éléments de la vue.
+     */
     public CardLayout getCardLayout() {
         return cardLayout;
     }
 
+    /**
+     * Accesseur pour les boutons et éléments de la vue.
+     */
     public JPanel getCardPanel() {
         return cardPanel;
     }
 
+    /**
+     * Accesseur pour les boutons et éléments de la vue.
+     */
     public JFrame getFrame() {
         return frame;
     }
 
+    /**
+     * Accesseur pour les boutons et éléments de la vue.
+     */
     public JFrame getSeriesFrame() {
         return seriesFrame;
     }

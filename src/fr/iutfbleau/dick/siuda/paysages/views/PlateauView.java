@@ -9,10 +9,12 @@ import fr.iutfbleau.dick.siuda.paysages.models.*;
 
 public class PlateauView extends JFrame {
     private PlateauPanel panel;
+    private PlateauInfos infos;
     private static final int HEX_SIZE = 40; // Taille du côté de l'hexagone
     private static final int BORDER_HEXAGONS = 50;
     public PlateauView(List<Tuile> tuiles){
         panel = new PlateauPanel(tuiles);
+        infos = new PlateauInfos(panel);
         this.setTitle("Dorfromantik - Plateau");
         //this.add(panel);
         int preferredWidth = (2 * BORDER_HEXAGONS + 1) * (int) (HEX_SIZE * 3 / 2);
@@ -23,7 +25,7 @@ public class PlateauView extends JFrame {
         int centerY = (preferredHeight / 2) - (600 / 2);
         scrollPane.getViewport().setViewPosition(new Point(centerX, centerY));
         scrollPane.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
-        JSplitPane jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, new TextArea());
+        JSplitPane jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, infos);
         jsp.setResizeWeight(0.8);
         add(jsp);
         setVisible(true);
@@ -35,5 +37,9 @@ public class PlateauView extends JFrame {
 
     public PlateauPanel getPanel(){
         return panel;
+    }
+
+    public PlateauInfos getInfosPanel(){
+        return infos;
     }
 }

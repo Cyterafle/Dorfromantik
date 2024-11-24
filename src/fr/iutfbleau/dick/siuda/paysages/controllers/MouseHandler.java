@@ -26,11 +26,15 @@ public class MouseHandler extends MouseAdapter {
         }
 
         if (SwingUtilities.isLeftMouseButton(e)) {
-            plateau.selectHexagon(e.getPoint()); // Sélectionne l'hexagone cliqué
+            if (plateau.selectHexagon(e.getPoint())){
+                controller.updateTuile();
+            } // Sélectionne l'hexagone cliqué
             if (plateau.getTuilesListSize() == 49){
                 controller.endGame();
             }
+            
         }
+        
     }
 
     @Override

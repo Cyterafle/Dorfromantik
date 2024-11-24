@@ -22,6 +22,10 @@ public class PlateauController {
         frame.getPanel().addMouseMotionListener(new MouseMotionHandler(frame.getPanel()));
     }
 
+    public void updateTuile(){
+        frame.getInfosPanel().repaint();
+    }
+
     public void endGame(){
         JOptionPane.showMessageDialog(frame, "Vous avez posé toutes les tuiles ! Le jeu est terminé !");
         frame.dispose();

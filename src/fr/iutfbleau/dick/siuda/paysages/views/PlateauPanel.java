@@ -20,7 +20,6 @@ public class PlateauPanel extends JPanel {
     private int currentTuile;
     private int index;
 
-
     public PlateauPanel(List<Tuile> tuiles) {
         this.tuiles = tuiles;
         this.currentTuile = 0;
@@ -50,12 +49,9 @@ public class PlateauPanel extends JPanel {
     }
 
     // Méthode pour gérer la sélection d'un hexagone
-    public void selectHexagon(Point point) {
+    public boolean selectHexagon(Point point) {
         int hexHeight = (int) (Math.sqrt(3) * HEX_SIZE);
         Dimension size = getSize();
-        if (currentTuile <= 48){
-            ++currentTuile;
-        }
 
         int centerX = size.width / 2;
         int centerY = size.height / 2;
@@ -72,18 +68,22 @@ public class PlateauPanel extends JPanel {
                 int y = centerY + row * hexHeight + (col % 2) * (hexHeight / 2);
 
                 // Ne pas vérifier l'hexagone central
-                if (col == 0 && row == 0)
+                if (col == 0 && row == 0 || selectedHexagons.contains(new Point(x, y)))
                     continue;
 
                 // Si le point est à l'intérieur de l'hexagone et cet hexagone est adjacent à un
                 // autre posé, on le sélectionne
                 if (isPointInHexagon(point, x, y) && isAdjacentToColoredHexagon(x, y, centerX, centerY)) {
                     selectedHexagons.add(new Point(x, y));
+                    if (currentTuile <= 48){
+                        ++currentTuile;
+                    }
                     repaint();
-                    return;
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     @Override
@@ -206,5 +206,14 @@ public class PlateauPanel extends JPanel {
 
     public int getTuilesListSize(){
         return selectedHexagons.size();
+    }
+
+    public void getNextTuile(Graphics2D g, int x, int y){
+        createHexagon(x, y);
+        if (currentTuile <= 48){
+            drawHexTriangles(g, x, y, tuiles.get(currentTuile+1));
+        }else{
+            drawHexTriangles(g, x, y, tuiles.get(currentTuile));
+        }
     }
 }

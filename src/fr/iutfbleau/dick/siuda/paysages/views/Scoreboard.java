@@ -7,8 +7,34 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.util.List;
 
+/**
+ * La classe <code>Scoreboard</code> représente une fenêtre affichant les 10 meilleurs scores pour une série donnée.
+ * <p>
+ * Cette classe utilise un tableau pour afficher les scores, avec un rendu personnalisé pour les rangs, 
+ * et un bouton permettant de retourner à l'écran précédent.
+ * </p>
+ *
+ * @version 1.0
+ * @author Siuda Matéo
+ * @author Dick Adrien
+ */
 public class Scoreboard extends JFrame {
+
+    /**
+     * Bouton "Retour" permettant de revenir à l'écran précédent.
+     */
     private JButton backButton;
+
+    /**
+     * Constructeur de la classe <code>Scoreboard</code>.
+     * <p>
+     * Initialise une fenêtre avec un tableau affichant les 10 meilleurs scores 
+     * pour une série donnée, ainsi qu'un bouton pour revenir à l'écran précédent.
+     * </p>
+     *
+     * @param idSerie L'identifiant de la série pour laquelle les scores sont affichés.
+     * @param scores Une liste des scores à afficher (au maximum 10 scores).
+     */
     public Scoreboard(int idSerie, List<Integer> scores) {
         setTitle("Classement des dix meilleurs scores");
         setSize(800, 500);
@@ -61,15 +87,27 @@ public class Scoreboard extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Ajoute le suffixe approprié au rang (par exemple, "1er", "2ème", "3ème").
+     *
+     * @param rank Le numéro du rang.
+     * @return Une chaîne de caractères représentant le rang avec le suffixe.
+     */
     private String getRankSuffix(int rank) {
-        // Ajoute le suffixe approprié à un numéro (1er, 2ème, 3ème, ...)
         switch (rank % 10) {
             case 1: return "er";
             default: return "ème";
         }
     }
 
-    // Classe pour personnaliser les couleurs des cellules
+    /**
+     * Classe interne pour personnaliser le rendu des cellules du tableau.
+     * <p>
+     * Elle attribue des couleurs spécifiques aux trois premiers rangs : 
+     * or pour le 1er, argent pour le 2ème, et bronze pour le 3ème.
+     * Les autres rangs sont affichés en noir.
+     * </p>
+     */
     static class CustomTableCellRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
@@ -77,7 +115,7 @@ public class Scoreboard extends JFrame {
             Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
             // Définir les couleurs en fonction du rang
-            if (column == 0) { // La colonne des rangs
+            if (column == 0) { // Colonne des rangs
                 switch (row) {
                     case 0: // 1er
                         cell.setForeground(new Color(255, 215, 0)); // Or
@@ -88,19 +126,28 @@ public class Scoreboard extends JFrame {
                     case 2: // 3ème
                         cell.setForeground(new Color(205, 127, 50)); // Bronze
                         break;
-                    default: // Les autres rangs
+                    default: // Autres rangs
                         cell.setForeground(Color.BLACK);
                         break;
                 }
             } else {
-                cell.setForeground(Color.BLACK); // Colonne des scores reste noire
+                cell.setForeground(Color.BLACK); // Colonne des scores en noir
             }
 
             return cell;
         }
     }
 
-    public JButton getBackButton(){
+    /**
+     * Retourne le bouton "Retour".
+     * <p>
+     * Ce bouton peut être utilisé pour ajouter un gestionnaire d'événements permettant
+     * de revenir à une autre vue.
+     * </p>
+     *
+     * @return Le bouton "Retour".
+     */
+    public JButton getBackButton() {
         return backButton;
     }
 }
