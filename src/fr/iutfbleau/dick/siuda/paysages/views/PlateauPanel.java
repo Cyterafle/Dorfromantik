@@ -14,9 +14,7 @@ import java.util.Map;
 public class PlateauPanel extends JPanel {
     private static final int HEX_SIZE = 40; // Taille du côté de l'hexagone
     private static final int BORDER_HEXAGONS = 50; // Nombre d'hexagones entre le centre et le bord
-    private static final Color BORDER_COLOR = Color.BLACK; // Couleur des bordures
-    private static final Color CENTER_COLOR = Color.BLUE; // Couleur de l'hexagone central
-    private static final Color SELECTED_COLOR = Color.BLUE; // Couleur de l'hexagone sélectionné
+    private static final Color BORDER_COLOR = Color.BLACK; // Couleur des borduresné
     private Point dragStartPoint = null; // Point de départ pour le déplacement
     private List<Point> selectedHexagons = new ArrayList<>(); // Liste pour suivre les hexagones sélectionnés
     private List<Tuile> tuiles;
@@ -57,7 +55,6 @@ public class PlateauPanel extends JPanel {
         Dimension size = getSize();
         if (currentTuile <= 48){
             ++currentTuile;
-            System.out.println(currentTuile);
         }
 
         int centerX = size.width / 2;
@@ -101,12 +98,12 @@ public class PlateauPanel extends JPanel {
         int centerX = size.width / 2;
         int centerY = size.height / 2;
 
-        // Dessiner et remplir l'hexagone central en bleu
+        /*// Dessiner et remplir l'hexagone central en bleu
         g2d.setColor(CENTER_COLOR);
         Path2D.Double centerHex = createHexagon(centerX, centerY);
         g2d.fill(centerHex);
         g2d.setColor(BORDER_COLOR);
-        g2d.draw(centerHex);
+        g2d.draw(centerHex);*/
 
         // Ajouter des triangles dans l'hexagone central
         drawHexTriangles(g2d, centerX, centerY, tuiles.get(0));
@@ -130,10 +127,10 @@ public class PlateauPanel extends JPanel {
 
                 // Si cet hexagone est sélectionné, on le colorie en bleu
                 if (selectedHexagons.contains(new Point(x, y))) {
-                    g2d.setColor(SELECTED_COLOR);
                     g2d.fill(hex);
-
-                    drawHexTriangles(g2d, x, y, tuiles.get(currentTuile));
+                    int index = selectedHexagons.indexOf(new Point(x, y));
+                    if (index < 49)
+                        drawHexTriangles(g2d, x, y, tuiles.get(index+1));
                 }
 
                 // Si cet hexagone est adjacent à un hexagone coloré (central ou sélectionné),
