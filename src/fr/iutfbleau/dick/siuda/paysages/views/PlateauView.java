@@ -22,8 +22,9 @@ public class PlateauView extends JFrame {
         int centerX = (preferredWidth / 2) - (800 / 2);
         int centerY = (preferredHeight / 2) - (600 / 2);
         scrollPane.getViewport().setViewPosition(new Point(centerX, centerY));
+        scrollPane.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
         JSplitPane jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, new TextArea());
-        jsp.setResizeWeight(0.67);
+        jsp.setResizeWeight(0.8);
         add(jsp);
         setVisible(true);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
