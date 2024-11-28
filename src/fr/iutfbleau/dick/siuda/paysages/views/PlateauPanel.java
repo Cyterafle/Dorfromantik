@@ -2,30 +2,85 @@ package fr.iutfbleau.dick.siuda.paysages.views;
 
 import javax.swing.*;
 
-import fr.iutfbleau.dick.siuda.paysages.models.Tuile;
-
 import fr.iutfbleau.dick.siuda.paysages.models.*;
 import java.awt.*;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * La classe <code>PlateauPanel</code> gère l'affichage graphique du plateau de jeu.
+ * <p>
+ * Elle est responsable du dessin des hexagones représentant les tuiles, 
+ * de leur sélection, et de leur mise en surbrillance en fonction des interactions utilisateur.
+ * </p>
+ *
+ * @version 1.0
+ * @author Siuda Matéo
+ * @author Dick Adrien
+ */
 public class PlateauPanel extends JPanel {
-    private static final int HEX_SIZE = 40; // Taille du côté de l'hexagone
-    private static final int BORDER_HEXAGONS = 50; // Nombre d'hexagones entre le centre et le bord
-    private static final Color BORDER_COLOR = Color.BLACK; // Couleur des borduresné
-    private Point dragStartPoint = null; // Point de départ pour le déplacement
-    private List<Point> selectedHexagons = new ArrayList<>(); // Liste pour suivre les hexagones sélectionnés
+
+    /**
+     * Taille d'un côté d'un hexagone.
+     */
+    private static final int HEX_SIZE = 40;
+
+    /**
+     * Nombre d'hexagones entre le centre et le bord du plateau.
+     */
+    private static final int BORDER_HEXAGONS = 50;
+
+    /**
+     * Couleur des bordures des hexagones.
+     */
+    private static final Color BORDER_COLOR = Color.BLACK;
+
+    /**
+     * Point de départ pour le déplacement du plateau.
+     */
+    private Point dragStartPoint = null;
+
+    /**
+     * Liste des hexagones sélectionnés sur le plateau.
+     */
+    private List<Point> selectedHexagons = new ArrayList<>();
+
+    /**
+     * Liste des tuiles du plateau.
+     */
     private List<Tuile> tuiles;
+
+    /**
+     * Indice de la tuile actuellement active.
+     */
     private int currentTuile;
+
+    /**
+     * Indice
+     */
     private int index;
 
+    /**
+     * Constructeur de la classe <code>PlateauPanel</code>.
+     * <p>
+     * Initialise le plateau avec une liste de tuiles.
+     * </p>
+     *
+     * @param tuiles La liste des tuiles à afficher sur le plateau.
+     */
     public PlateauPanel(List<Tuile> tuiles) {
         this.tuiles = tuiles;
         this.currentTuile = 0;
     }
 
-    // Méthode pour dessiner un hexagone à une position donnée
+    /**
+     * Crée un hexagone à une position donnée.
+     *
+     * @param x La coordonnée X du centre de l'hexagone.
+     * @param y La coordonnée Y du centre de l'hexagone.
+     * @return Un objet <code>Path2D.Double</code> représentant l'hexagone.
+     */
     public Path2D.Double createHexagon(int x, int y) {
         Path2D.Double hex = new Path2D.Double();
         for (int i = 0; i < 6; i++) {
@@ -42,13 +97,29 @@ public class PlateauPanel extends JPanel {
         return hex;
     }
 
-    // Méthode pour vérifier si un point est à l'intérieur d'un hexagone
+    /**
+     * Vérifie si un point est à l'intérieur d'un hexagone donné.
+     *
+     * @param point Le point à vérifier.
+     * @param x La coordonnée X du centre de l'hexagone.
+     * @param y La coordonnée Y du centre de l'hexagone.
+     * @return <code>true</code> si le point est à l'intérieur de l'hexagone, <code>false</code> sinon.
+     */
     public boolean isPointInHexagon(Point point, int x, int y) {
         Path2D.Double hex = createHexagon(x, y);
         return hex.contains(point);
     }
 
-    // Méthode pour gérer la sélection d'un hexagone
+    /**
+     * Gère la sélection d'un hexagone.
+     * <p>
+     * Si l'hexagone est adjacent à un autre déjà coloré et n'a pas été sélectionné auparavant,
+     * il est ajouté à la liste des hexagones sélectionnés.
+     * </p>
+     *
+     * @param point Le point où l'utilisateur a cliqué.
+     * @return <code>true</code> si un hexagone a été sélectionné, <code>false</code> sinon.
+     */
     public boolean selectHexagon(Point point) {
         int hexHeight = (int) (Math.sqrt(3) * HEX_SIZE);
         Dimension size = getSize();
@@ -86,6 +157,15 @@ public class PlateauPanel extends JPanel {
         return false;
     }
 
+    /**
+     * Redessine les composants graphiques du plateau.
+     * <p>
+     * Affiche les hexagones dans une grille et applique des couleurs en fonction de leur état
+     * (sélectionné, adjacent, etc.).
+     * </p>
+     *
+     * @param g L'objet <code>Graphics</code> utilisé pour dessiner.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -136,7 +216,14 @@ public class PlateauPanel extends JPanel {
         }
     }
 
-    // Méthode pour dessiner les triangles dans un hexagone
+    /**
+     * Dessine les triangles à l'intérieur d'un hexagone en fonction des terrains d'une tuile.
+     *
+     * @param g2d L'objet <code>Graphics2D</code> utilisé pour dessiner.
+     * @param x La coordonnée X du centre de l'hexagone.
+     * @param y La coordonnée Y du centre de l'hexagone.
+     * @param tuile La tuile dont les terrains sont utilisés pour colorer les triangles.
+     */
     private void drawHexTriangles(Graphics2D g2d, int x, int y, Tuile tuile) {
         // Coordonnées des sommets de l'hexagone
         double[] xPoints = new double[6];
@@ -179,7 +266,15 @@ public class PlateauPanel extends JPanel {
         
     }
 
-    // Méthode pour vérifier si un hexagone est adjacent à un hexagone coloré
+    /**
+     * Vérifie si un hexagone est adjacent à un autre hexagone coloré.
+     *
+     * @param x La coordonnée X de l'hexagone à vérifier.
+     * @param y La coordonnée Y de l'hexagone à vérifier.
+     * @param centerX La coordonnée X du centre du plateau.
+     * @param centerY La coordonnée Y du centre du plateau.
+     * @return <code>true</code> si l'hexagone est adjacent, <code>false</code> sinon.
+     */
     private boolean isAdjacentToColoredHexagon(int x, int y, int centerX, int centerY) {
         // Vérifier si l'hexagone est adjacent au centre
         if (Math.abs(x - centerX) <= HEX_SIZE * 3 / 2 && Math.abs(y - centerY) <= (Math.sqrt(3) * HEX_SIZE)) {
@@ -197,18 +292,40 @@ public class PlateauPanel extends JPanel {
         return false;
     }
 
-    public Point getDragStartPoint(){
+    /**
+     * Retourne le point de départ du déplacement.
+     *
+     * @return Le point de départ pour le déplacement.
+     */
+    public Point getDragStartPoint() {
         return dragStartPoint;
     }
 
-    public void setDragStartPoint(Point p){
+    /**
+     * Définit le point de départ du déplacement.
+     *
+     * @param p Le nouveau point de départ.
+     */
+    public void setDragStartPoint(Point p) {
         dragStartPoint = p;
     }
 
-    public int getTuilesListSize(){
+    /**
+     * Retourne le nombre d'hexagones sélectionnés.
+     *
+     * @return Le nombre d'hexagones sélectionnés.
+     */
+    public int getTuilesListSize() {
         return selectedHexagons.size();
     }
 
+    /**
+     * Dessine la prochaine tuile sur un hexagone donné.
+     *
+     * @param g L'objet <code>Graphics2D</code> utilisé pour dessiner.
+     * @param x La coordonnée X de l'hexagone.
+     * @param y La coordonnée Y de l'hexagone.
+     */
     public void getNextTuile(Graphics2D g, int x, int y){
         createHexagon(x, y);
         if (currentTuile <= 48){
@@ -218,6 +335,11 @@ public class PlateauPanel extends JPanel {
         }
     }
 
+    /**
+     * Retourne la prochaine tuile active.
+     *
+     * @return La prochaine tuile active ou <code>null</code> si toutes les tuiles ont été utilisées.
+     */
     public Tuile getNextTuile(){
         if (currentTuile <= 48)
             return tuiles.get(currentTuile+1);
