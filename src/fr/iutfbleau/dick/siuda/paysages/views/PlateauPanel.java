@@ -61,6 +61,8 @@ public class PlateauPanel extends JPanel {
      */
     private int index;
 
+    private PlateauModel model;
+
     /**
      * Constructeur de la classe <code>PlateauPanel</code>.
      * <p>
@@ -69,8 +71,9 @@ public class PlateauPanel extends JPanel {
      *
      * @param tuiles La liste des tuiles à afficher sur le plateau.
      */
-    public PlateauPanel(List<Tuile> tuiles) {
+    public PlateauPanel(PlateauModel model, List<Tuile> tuiles) {
         this.tuiles = tuiles;
+        this.model = model;
         this.currentTuile = 0;
     }
 
@@ -228,9 +231,7 @@ public class PlateauPanel extends JPanel {
         // Coordonnées des sommets de l'hexagone
         double[] xPoints = new double[6];
         double[] yPoints = new double[6];
-        int j = 0, lastPoint = -1, slice = 0;
-        Terrains terrain = Terrains.values()[0];
-        int[] typeTerr = tuile.getRepartitionTerrains();
+        Terrains[] terrains = tuile.getRepartitionTerrains();
         for (int i = 0; i < 6; i++) {
             double angle = Math.toRadians(60 * i);
             xPoints[i] = x + HEX_SIZE * Math.cos(angle);
@@ -239,31 +240,22 @@ public class PlateauPanel extends JPanel {
 
         // Dessiner chaque triangle
         for (int i = 0; i < 6; i++) {
-            int actuel = (6 + (i + tuile.getOrientation())) %6;
-            int next = (actuel + 1)%6;
+            int next = (i + 1)%6;
             Polygon triangle = new Polygon();
             triangle.addPoint(x, y); // Centre de l'hexagone
-            triangle.addPoint((int) xPoints[actuel], (int) yPoints[actuel]); // Premier sommet
+            triangle.addPoint((int) xPoints[i], (int) yPoints[i]); // Premier sommet
             triangle.addPoint((int) xPoints[next], (int) yPoints[next]); // Sommet suivant
-            if (slice == 0){
-                while (typeTerr[j] == 0 | j == lastPoint)
-                    ++j;
-                slice = typeTerr[j];
-                lastPoint = j;
-                terrain = Terrains.values()[j];
-            }
             try{
-                g2d.setColor(terrain.getColor());
+                g2d.setColor(terrains[i].getColor());
             } catch (NullPointerException ex) {
                 //TODO
             }
-            --slice;
             // Définir une couleur pour chaque triangle
             g2d.fill(triangle);
             g2d.setColor(BORDER_COLOR);
             g2d.draw(triangle);
         }
-        
+        model.ajouterTuile(tuile, tuiles);
     }
 
     /**

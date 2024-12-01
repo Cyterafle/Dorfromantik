@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import fr.iutfbleau.dick.siuda.paysages.models.PlateauModel;
+
 /**
  * La classe <code>PlateauInfos</code> représente un panneau affichant des informations 
  * supplémentaires sur le plateau de jeu, telles que la prochaine tuile à placer.
@@ -34,6 +36,8 @@ public class PlateauInfos extends JPanel {
      */
     private int y;
 
+    private PlateauModel model;
+
     /**
      * Constructeur de la classe <code>PlateauInfos</code>.
      * <p>
@@ -43,7 +47,8 @@ public class PlateauInfos extends JPanel {
      *
      * @param panel Le panneau principal du plateau, utilisé pour afficher la prochaine tuile.
      */
-    public PlateauInfos(PlateauPanel panel) {
+    public PlateauInfos(PlateauModel model, PlateauPanel panel) {
+        this.model = model;
         this.panel = panel;
         x = 40;
         y = 400;

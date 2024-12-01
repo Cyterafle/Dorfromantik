@@ -5,6 +5,8 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import java.util.List;
+
+import fr.iutfbleau.dick.siuda.paysages.models.PlateauModel;
 import fr.iutfbleau.dick.siuda.paysages.models.Tuile;
 
 /**
@@ -56,9 +58,9 @@ public class PlateauView extends JFrame {
      *
      * @param tuiles La liste des tuiles à afficher sur le plateau.
      */
-    public PlateauView(List<Tuile> tuiles) {
-        panel = new PlateauPanel(tuiles);
-        infos = new PlateauInfos(panel);
+    public PlateauView(PlateauModel model, List<Tuile> tuiles) {
+        panel = new PlateauPanel(model, tuiles);
+        infos = new PlateauInfos(model, panel);
 
         this.setTitle("Dorfromantik - Plateau");
 
