@@ -1,6 +1,10 @@
 package fr.iutfbleau.dick.siuda.paysages.models;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import java.awt.Point;
 
 /**
  * La classe <code>Tuile</code> représente une tuile du jeu, caractérisée par un identifiant, 
@@ -56,8 +60,16 @@ public class Tuile {
      */
     private Terrains[] repartitionTerrain;
 
+    /**
+     * Point contenant les coordonnées centrales de la tuile 
+     */
+    private Point centerPoint;
 
-    private List<Tuile> voisins;
+
+    /**
+     * Liste contenant les voisins de la tuile
+     */
+    private Tuile[] voisins;
 
     /**
      * Constructeur de la classe <code>Tuile</code>.
@@ -83,6 +95,8 @@ public class Tuile {
         this.foret = foret;
         this.montagne = montagne;
         int[] terrains = {mer, pré, champs, foret, montagne};
+        this.voisins = new Tuile[6];
+        this.centerPoint = null;
         setRepartitionTerrains(terrains);
     }
 
@@ -97,8 +111,8 @@ public class Tuile {
      */
     @Override
     public String toString() {
-        return String.format("Tuile [ID: %d, Terrain ID: %d, Mer: %d, Pré: %d, Champs: %d, Forêt: %d, Montagne: %d]",
-                idTuile, idTerrain, mer, pré, champs, foret, montagne);
+        return String.format("Tuile [ID: %d, Terrain ID: %d, Mer: %d, Pré: %d, Champs: %d, Forêt: %d, Montagne: %d], (Coordonnées %d, %d)",
+                idTuile, idTerrain, mer, pré, champs, foret, montagne, centerPoint.x, centerPoint.y);
     }
 
 
@@ -157,5 +171,60 @@ public class Tuile {
             newCouleurs[offset] = repartitionTerrain[i];
         }
         repartitionTerrain = newCouleurs;
+    }
+
+    /**
+     * Méthode servant à enrgistrer dans la cellule les coordonnées de son centre, sous forme d'un objet de type Point
+     * @param p les coordonnées de la tuile
+     */
+    public void setCenterPoint(Point p){
+        centerPoint = p;
+    }
+
+    /**
+     * Méthode servant à récupérer depuis la tuile ses coordonnées centrales
+     * @return le point définissant ces coordonnées
+    */
+    public Point getCenterPoint(){
+        return centerPoint;
+    }
+
+    /**
+     * Méthode privée vérifiant si la liste des voisins est complète ou non
+     * @return un booléen sur l'état de la liste
+    */
+    private boolean isNull(){
+        for (Tuile t : voisins){
+            if (t == null)
+                return true;
+        }
+        return false;
+    }
+
+    public void rechercheVoisins(List<Tuile> tuiles){
+        if (! isNull())
+            return;
+        for (int i = 0; i < tuiles.size(); ++i){
+            Tuile current = tuiles.get(i);
+            Point currentPos = current.getCenterPoint();
+            if (currentPos == null)
+                return;
+            else if (currentPos == new Point((int) centerPoint.getX() + 60,(int) centerPoint.getY() + 34) && voisins[0] == null)
+                voisins[0] = current;
+            else if (currentPos == new Point((int) centerPoint.getX(),(int) centerPoint.getY() + 69) && voisins[1] == null)
+                voisins[1] = current;
+            else if (currentPos == new Point((int) centerPoint.getX() - 60,(int) centerPoint.getY() + 35) && voisins[2] == null)
+                voisins[2] = current;
+            else if (currentPos == new Point((int) centerPoint.getX() - 60,(int) centerPoint.getY() - 34) && voisins[3] == null)
+                voisins[3] = current;
+            else if (currentPos == new Point((int) centerPoint.getX(),(int) centerPoint.getY() - 69) && voisins[4] == null)
+                voisins[4] = current;
+            else if (currentPos == new Point((int) centerPoint.getX() + 60,(int) centerPoint.getY() - 35) && voisins[5] == null)
+                voisins[5] = current;
+        }
+    }
+
+    public Tuile getVoisin(int i){
+        return voisins[i];
     }
 }

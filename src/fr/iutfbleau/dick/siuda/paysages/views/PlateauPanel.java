@@ -6,7 +6,10 @@ import fr.iutfbleau.dick.siuda.paysages.models.*;
 import java.awt.*;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * La classe <code>PlateauPanel</code> gère l'affichage graphique du plateau de jeu.
@@ -52,15 +55,13 @@ public class PlateauPanel extends JPanel {
     private List<Tuile> tuiles;
 
     /**
-     * Indice de la tuile actuellement active.
-     */
-    private int currentTuile;
-
-    /**
      * Indice
      */
     private int index;
 
+    /**
+     * Le modèle du plateau pour interagir avec les données
+     */
     private PlateauModel model;
 
     /**
@@ -71,12 +72,13 @@ public class PlateauPanel extends JPanel {
      *
      * @param tuiles La liste des tuiles à afficher sur le plateau.
      */
-    public PlateauPanel(PlateauModel model, List<Tuile> tuiles) {
-        this.tuiles = tuiles;
+    public PlateauPanel(PlateauModel model) {
         this.model = model;
-        this.currentTuile = 0;
+        this.tuiles = model.getTuiles();
     }
 
+
+    
     /**
      * Crée un hexagone à une position donnée.
      *
@@ -149,8 +151,8 @@ public class PlateauPanel extends JPanel {
                 // autre posé, on le sélectionne
                 if (isPointInHexagon(point, x, y) && isAdjacentToColoredHexagon(x, y, centerX, centerY)) {
                     selectedHexagons.add(new Point(x, y));
-                    if (currentTuile <= 48){
-                        ++currentTuile;
+                    if (model.getCurrentTuile() <= 48){
+                        model.incrementCurrentTuile();
                     }
                     repaint();
                     return true;
@@ -238,6 +240,11 @@ public class PlateauPanel extends JPanel {
             yPoints[i] = y + HEX_SIZE * Math.sin(angle);
         }
 
+        // Enregistrement des coordonnées du centre dans la tuile
+        if (x != 40 && y != 400){
+            tuile.setCenterPoint(new Point(x, y));
+        }
+
         // Dessiner chaque triangle
         for (int i = 0; i < 6; i++) {
             int next = (i + 1)%6;
@@ -318,23 +325,14 @@ public class PlateauPanel extends JPanel {
      * @param y La coordonnée Y de l'hexagone.
      */
     public void getNextTuile(Graphics2D g, int x, int y){
+        int currentTuile;
         createHexagon(x, y);
-        if (currentTuile <= 48){
+        if ((currentTuile = model.getCurrentTuile()) <= 48){
             drawHexTriangles(g, x, y, tuiles.get(currentTuile+1));
         }else{
             drawHexTriangles(g, x, y, tuiles.get(currentTuile));
         }
     }
 
-    /**
-     * Retourne la prochaine tuile active.
-     *
-     * @return La prochaine tuile active ou <code>null</code> si toutes les tuiles ont été utilisées.
-     */
-    public Tuile getNextTuile(){
-        if (currentTuile <= 48)
-            return tuiles.get(currentTuile+1);
-        return null;
-
-    }
+    
 }

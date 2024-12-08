@@ -50,8 +50,6 @@ public class PlateauInfos extends JPanel {
     public PlateauInfos(PlateauModel model, PlateauPanel panel) {
         this.model = model;
         this.panel = panel;
-        x = 40;
-        y = 400;
     }
 
     /**
@@ -68,10 +66,14 @@ public class PlateauInfos extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
+        // Affiche le score
+        String score = String.format("Score actuel : %d", model.getScore());
+        g.drawString(score, 70, 100);
+
         // Affiche le texte "Prochaine tuile :"
-        g.drawString("Prochaine tuile :", x + 40, y - 50);
+        g.drawString("Prochaine tuile :", 70, 350);
 
         // Dessine la prochaine tuile à partir du panneau principal
-        panel.getNextTuile(g2d, x, y);
+        panel.getNextTuile(g2d, 100, 400);
     }
 }

@@ -6,8 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import fr.iutfbleau.dick.siuda.paysages.views.PlateauView;
 
@@ -35,13 +39,47 @@ public class PlateauModel {
     private PlateauView view;
 
     /**
+     * La liste des tuiles de la partie courante
+     */
+    private List<Tuile> tuiles;
+
+    /**
+     * Indice de la tuile actuellement active.
+     */
+    private int currentTuile;
+
+     /**
+     * L'identifiant de la série actuellement en cours de jeu.
+     */
+    private int idSerie;
+
+    /**
+     * Le Score de la partie courante
+     */
+    private int score;
+
+        /**
+     * Un dictionnaire permettant de stocker une liste de poches en fonction du terrain
+     */
+    private Map<Terrains, List<Set<Tuile>>> poches;
+
+    /**
      * Constructeur de la classe <code>PlateauModel</code>.
      * <p>
      * Initialise la connexion à la base de données via la classe <code>Connexion</code>.
      * </p>
+     * @param idSerie le numéro de la série sélectionnée
      */
-    public PlateauModel() {
+    public PlateauModel(int idSerie) {
         cnx = Connexion.getInstance().getCnx();
+        tuiles = recupererTuilesPourSerie(idSerie);
+        this.currentTuile = 0;
+        this.score = 0;
+        this.poches = new HashMap<>();
+        for (Terrains terrain : Terrains.values()) {
+            poches.put(terrain, new ArrayList<>());
+        }
+        ajouterTuile(tuiles.get(0));
     }
 
     /**
@@ -115,7 +153,96 @@ public class PlateauModel {
      *
      * @return La prochaine tuile active sur le plateau.
      */
-    public Tuile getNexTuile() {
-        return view.getPanel().getNextTuile();
+    public Tuile getNextTuile(){
+        if (currentTuile <= 48)
+            return tuiles.get(currentTuile+1);
+        return null;
+    }
+
+    /**
+     * Permet de mettre en mémoire la liste des tuiles de la série en cours
+     * @param list une List<E> de tuiles correspondant à celle de la série donnée en argument au constructeur
+     */
+    public void setTuiles(List<Tuile> list){
+        tuiles = list;
+    }
+
+    public List<Tuile> getTuiles(){
+        return tuiles;
+    }
+
+    public int getCurrentTuile(){
+        return currentTuile;
+    }
+
+    public void incrementCurrentTuile(){
+        ++currentTuile;
+    }
+
+    public int getIdSerie(){
+        return idSerie;
+    }
+
+    public int getScore(){
+        return score;
+    }
+
+    public void rechercheVoisins(){
+        for (int i = 0; i < tuiles.size(); ++i){
+            Tuile current = tuiles.get(i);
+            if (current.getCenterPoint() != null)
+                current.rechercheVoisins(tuiles);
+            else
+                return;
+        }
+    }
+
+    public void calculerScore() {
+        int score = 0;
+        for (Map.Entry<Terrains, List<Set<Tuile>>> entry : poches.entrySet()) {
+            for (Set<Tuile> poche : entry.getValue()) {
+                int taillePoche = poche.size();
+                score += taillePoche * taillePoche;
+            }
+        }
+        this.score = score;
+    }
+
+    private void ajouterTuile(Tuile tuile) {
+        for (int i = 0; i < 6; i++) { // Parcourir les côtés de la tuile
+            Terrains terrain = tuile.getTerrainAt(i); // Terrain du côté i
+            Tuile voisin = tuile.getVoisin(i); // Tuile voisine du côté i (peut être null)
+
+            if (voisin != null && voisin.getTerrainAt((i + 3) % 6) == terrain) {
+                // Connecté au même terrain
+                Set<Tuile> pocheTrouvee = trouverPoche(terrain, voisin);
+                if (pocheTrouvee != null) {
+                    pocheTrouvee.add(tuile);
+                } else {
+                    // Ajouter à une nouvelle poche si pas connectée
+                    Set<Tuile> nouvellePoche = new HashSet<>();
+                    nouvellePoche.add(tuile);
+                    poches.get(terrain).add(nouvellePoche);
+                }
+            } else {
+                // Nouveau terrain isolé
+                Set<Tuile> nouvellePoche = new HashSet<>();
+                nouvellePoche.add(tuile);
+                poches.get(terrain).add(nouvellePoche);
+            }
+        }
+    }
+
+    private Set<Tuile> trouverPoche(Terrains terrain, Tuile tuile) {
+        for (Set<Tuile> poche : poches.get(terrain)) {
+            if (poche.contains(tuile)) {
+                return poche;
+            }
+        }
+        return null;
+    }
+
+    public void ajouterTuileCourante(){
+        ajouterTuile(tuiles.get(currentTuile));
     }
 }

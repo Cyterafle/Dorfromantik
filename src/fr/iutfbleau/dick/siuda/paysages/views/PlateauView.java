@@ -58,8 +58,8 @@ public class PlateauView extends JFrame {
      *
      * @param tuiles La liste des tuiles à afficher sur le plateau.
      */
-    public PlateauView(PlateauModel model, List<Tuile> tuiles) {
-        panel = new PlateauPanel(model, tuiles);
+    public PlateauView(PlateauModel model) {
+        panel = new PlateauPanel(model);
         infos = new PlateauInfos(model, panel);
 
         this.setTitle("Dorfromantik - Plateau");

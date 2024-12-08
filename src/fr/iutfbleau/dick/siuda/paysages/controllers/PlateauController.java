@@ -28,10 +28,6 @@ public class PlateauController {
      */
     private PlateauModel model;
 
-    /**
-     * L'identifiant de la série actuellement en cours de jeu.
-     */
-    private int idSerie;
 
     /**
      * Constructeur de la classe <code>PlateauController</code>.
@@ -43,9 +39,8 @@ public class PlateauController {
      * @param idSerie L'identifiant de la série à charger pour la partie.
      */
     public PlateauController(int idSerie) {
-        model = new PlateauModel();
-        this.idSerie = idSerie;
-        frame = new PlateauView(model, model.recupererTuilesPourSerie(idSerie));
+        model = new PlateauModel(idSerie);
+        frame = new PlateauView(model);
         model.setView(frame);
         PanelListener();
         frame.addKeyListener(new KeyHandler(model, this));
@@ -71,6 +66,9 @@ public class PlateauController {
      * </p>
      */
     public void updateTuile() {
+        model.rechercheVoisins();
+        model.ajouterTuileCourante();
+        model.calculerScore();
         frame.getInfosPanel().repaint();
     }
 
@@ -84,6 +82,6 @@ public class PlateauController {
     public void endGame() {
         JOptionPane.showMessageDialog(frame, "Vous avez posé toutes les tuiles ! Le jeu est terminé !");
         frame.dispose();
-        new ScoreController(idSerie);
+        new ScoreController(model.getIdSerie());
     }
 }
