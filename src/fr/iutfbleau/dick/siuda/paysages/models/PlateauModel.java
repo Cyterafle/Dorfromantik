@@ -75,6 +75,7 @@ public class PlateauModel {
         tuiles = recupererTuilesPourSerie(idSerie);
         this.currentTuile = 0;
         this.score = 0;
+        this.idSerie = idSerie;
         this.poches = new HashMap<>();
         for (Terrains terrain : Terrains.values()) {
             poches.put(terrain, new ArrayList<>());
