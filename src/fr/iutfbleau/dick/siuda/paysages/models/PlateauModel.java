@@ -1,5 +1,6 @@
 package fr.iutfbleau.dick.siuda.paysages.models;
 
+import java.awt.Point;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -58,10 +59,18 @@ public class PlateauModel {
      */
     private int score;
 
-        /**
+    /**
      * Un dictionnaire permettant de stocker une liste de poches en fonction du terrain
      */
-    private Map<Terrains, List<Set<Tuile>>> poches;
+    private Map<Terrains, Set<Map<Tuile, Integer>>> poches;
+
+    /**
+     * Liste des hexagones sélectionnés sur le plateau.
+     */
+    private List<Point> selectedHexagons;
+
+
+    //private Map<Terrains, List<Set<Tuile>>> poches; // Chaque terrain a une liste de poches
 
     /**
      * Constructeur de la classe <code>PlateauModel</code>.
@@ -74,14 +83,16 @@ public class PlateauModel {
         cnx = Connexion.getInstance().getCnx();
         tuiles = recupererTuilesPourSerie(idSerie);
         this.currentTuile = 0;
+        this.selectedHexagons = new ArrayList<>();
         this.score = 0;
         this.idSerie = idSerie;
         this.poches = new HashMap<>();
         for (Terrains terrain : Terrains.values()) {
-            poches.put(terrain, new ArrayList<>());
+            poches.put(terrain, new HashSet<>());
         }
         ajouterTuile(tuiles.get(currentTuile));
     }
+
 
     /**
      * Récupère les tuiles associées à une série spécifique depuis la base de données.
@@ -188,24 +199,50 @@ public class PlateauModel {
         return score;
     }
 
+    private void setTuilePoint(){
+        for (int i = 1; i <= getSelectedHexagonsSize(); ++i){
+            tuiles.get(i).setCenterPoint(selectedHexagons.get(i-1));
+        }
+    }
+
     public void rechercheVoisins(){
+        if (selectedHexagons.size() > 0){
+            setTuilePoint();
+        }
         for (int i = 0; i < tuiles.size(); ++i){
             Tuile current = tuiles.get(i);
-            if (current.getCenterPoint() != null)
+            Tuile next = tuiles.get(i+1);
+            if (current.getCenterPoint() != null){
                 current.rechercheVoisins(tuiles);
-            else
+            } else if (next.getCenterPoint() == null){
+                ajouterTuile(current);
                 return;
+            }
         }
     }
 
     public void calculerScore() {
         int score = 0;
-        for (Map.Entry<Terrains, List<Set<Tuile>>> entry : poches.entrySet()) {
-            for (Set<Tuile> poche : entry.getValue()) {
-                int taillePoche = poche.size();
+        String calcul = "";
+        Set<Tuile> tuilesVisitees;
+        for (Map.Entry<Terrains, Set<Map<Tuile, Integer>>> entry : poches.entrySet()) {
+            tuilesVisitees = new HashSet<>();
+            calcul += "(";
+            for (Map<Tuile, Integer> poche : entry.getValue()) {
+                int taillePoche = 0;
+                for (Map.Entry<Tuile, Integer> tuile : poche.entrySet()){
+                    if (tuilesVisitees.add(tuile.getKey())){
+                        ++taillePoche;
+                    }
+                }
+                calcul += taillePoche + "^2";
                 score += taillePoche * taillePoche;
+                calcul += " + ";
             }
+            calcul += ")";
         }
+        calcul += " = " + score;
+        System.out.println(calcul);
         this.score = score;
     }
 
@@ -213,37 +250,51 @@ public class PlateauModel {
         for (int i = 0; i < 6; i++) { // Parcourir les côtés de la tuile
             Terrains terrain = tuile.getTerrainAt(i); // Terrain du côté i
             Tuile voisin = tuile.getVoisin(i); // Tuile voisine du côté i (peut être null)
+            int terrainVoisin = (i + 3) % 6;
 
-            if (voisin != null && voisin.getTerrainAt((i + 3) % 6) == terrain) {
+            if (voisin != null && voisin.getTerrainAt(terrainVoisin) == terrain) {
                 // Connecté au même terrain
-                Set<Tuile> pocheTrouvee = trouverPoche(terrain, voisin);
+                Map<Tuile, Integer> pocheTrouvee = trouverPoche(terrain, voisin, terrainVoisin);
                 if (pocheTrouvee != null) {
-                    pocheTrouvee.add(tuile);
+                    pocheTrouvee.put(tuile, i);
                 } else {
                     // Ajouter à une nouvelle poche si pas connectée
-                    Set<Tuile> nouvellePoche = new HashSet<>();
-                    nouvellePoche.add(tuile);
+                    Map<Tuile, Integer> nouvellePoche = new HashMap<>();
+                    nouvellePoche.put(tuile, i);
                     poches.get(terrain).add(nouvellePoche);
                 }
             } else {
                 // Nouveau terrain isolé
-                Set<Tuile> nouvellePoche = new HashSet<>();
-                nouvellePoche.add(tuile);
+                Map<Tuile, Integer> nouvellePoche = new HashMap<>();
+                nouvellePoche.put(tuile, i);
                 poches.get(terrain).add(nouvellePoche);
             }
         }
     }
 
-    private Set<Tuile> trouverPoche(Terrains terrain, Tuile tuile) {
-        for (Set<Tuile> poche : poches.get(terrain)) {
-            if (poche.contains(tuile)) {
-                return poche;
+    private Map<Tuile, Integer> trouverPoche(Terrains terrain, Tuile tuile, int cote) {
+        for (Map<Tuile, Integer> poche : poches.get(terrain)) {
+            try {
+                if (poche.get(tuile) == cote){
+                    return poche;
+                }
+            } catch (NullPointerException e) {
+                continue;
             }
         }
         return null;
     }
 
-    public void ajouterTuileCourante(){
-        ajouterTuile(tuiles.get(currentTuile));
+    public List<Point> getSelectedHexagons(){
+        return selectedHexagons;
+    }
+
+    /**
+     * Retourne le nombre d'hexagones sélectionnés.
+     *
+     * @return Le nombre d'hexagones sélectionnés.
+     */
+    public int getSelectedHexagonsSize(){
+        return selectedHexagons.size();
     }
 }

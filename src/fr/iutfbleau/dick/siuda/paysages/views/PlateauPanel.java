@@ -45,11 +45,6 @@ public class PlateauPanel extends JPanel {
     private Point dragStartPoint = null;
 
     /**
-     * Liste des hexagones sélectionnés sur le plateau.
-     */
-    private List<Point> selectedHexagons = new ArrayList<>();
-
-    /**
      * Liste des tuiles du plateau.
      */
     private List<Tuile> tuiles;
@@ -144,17 +139,16 @@ public class PlateauPanel extends JPanel {
                 int y = centerY + row * hexHeight + (col % 2) * (hexHeight / 2);
 
                 // Ne pas vérifier les hexagones placés
-                if (col == 0 && row == 0 || selectedHexagons.contains(new Point(x, y)))
+                if (col == 0 && row == 0 || model.getSelectedHexagons().contains(new Point(x, y)))
                     continue;
 
                 // Si le point est à l'intérieur de l'hexagone et cet hexagone est adjacent à un
                 // autre posé, on le sélectionne
                 if (isPointInHexagon(point, x, y) && isAdjacentToColoredHexagon(x, y, centerX, centerY)) {
-                    selectedHexagons.add(new Point(x, y));
+                    model.getSelectedHexagons().add(new Point(x, y));
                     if (model.getCurrentTuile() <= 48){
                         model.incrementCurrentTuile();
                     }
-                    repaint();
                     return true;
                 }
             }
@@ -174,6 +168,7 @@ public class PlateauPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        Tuile tuileInit = tuiles.get(0);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(2));
 
@@ -184,7 +179,9 @@ public class PlateauPanel extends JPanel {
         int centerY = size.height / 2;
 
         // Ajouter des triangles dans l'hexagone central
-        drawHexTriangles(g2d, centerX, centerY, tuiles.get(0));
+        drawHexTriangles(g2d, centerX, centerY, tuileInit);
+        if (tuileInit.getCenterPoint() == null)
+            tuileInit.setCenterPoint(new Point(centerX, centerY));
 
         // Nombre d'hexagones à afficher horizontalement et verticalement
         int cols = BORDER_HEXAGONS; // Nombre d'hexagones à droite/gauche du centre
@@ -204,9 +201,9 @@ public class PlateauPanel extends JPanel {
                 Path2D.Double hex = createHexagon(x, y);
 
                 // Si cet hexagone est sélectionné, on le colorie en bleu
-                if (selectedHexagons.contains(new Point(x, y))) {
+                if (model.getSelectedHexagons().contains(new Point(x, y))) {
                     g2d.fill(hex);
-                    index = selectedHexagons.indexOf(new Point(x, y));
+                    index = model.getSelectedHexagons().indexOf(new Point(x, y));
                     if (index < 49)
                         drawHexTriangles(g2d, x, y, tuiles.get(index+1));
                 }
@@ -240,11 +237,6 @@ public class PlateauPanel extends JPanel {
             yPoints[i] = y + HEX_SIZE * Math.sin(angle);
         }
 
-        // Enregistrement des coordonnées du centre dans la tuile
-        if (x != 40 && y != 400){
-            tuile.setCenterPoint(new Point(x, y));
-        }
-
         // Dessiner chaque triangle
         for (int i = 0; i < 6; i++) {
             int next = (i + 1)%6;
@@ -262,6 +254,9 @@ public class PlateauPanel extends JPanel {
             g2d.setColor(BORDER_COLOR);
             g2d.draw(triangle);
         }
+
+        model.rechercheVoisins();
+        model.calculerScore();
     }
 
     /**
@@ -280,7 +275,7 @@ public class PlateauPanel extends JPanel {
         }
 
         // Vérifier si l'hexagone est adjacent à un hexagone sélectionné
-        for (Point selectedHex : selectedHexagons) {
+        for (Point selectedHex : model.getSelectedHexagons()) {
             if (Math.abs(x - selectedHex.x) <= HEX_SIZE * 3 / 2
                     && Math.abs(y - selectedHex.y) <= (Math.sqrt(3) * HEX_SIZE)) {
                 return true;
@@ -308,14 +303,7 @@ public class PlateauPanel extends JPanel {
         dragStartPoint = p;
     }
 
-    /**
-     * Retourne le nombre d'hexagones sélectionnés.
-     *
-     * @return Le nombre d'hexagones sélectionnés.
-     */
-    public int getTuilesListSize() {
-        return selectedHexagons.size();
-    }
+    
 
     /**
      * Dessine la prochaine tuile sur un hexagone donné.

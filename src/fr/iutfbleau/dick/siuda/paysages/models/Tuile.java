@@ -208,7 +208,6 @@ public class Tuile {
             Tuile current = tuiles.get(i);
             Point currentPos = current.getCenterPoint();
             if (currentPos == null){
-                System.out.println("Position :" + centerPoint.toString() + " , voisins : " + Arrays.toString(voisins));
                 return;
             } else if (currentPos.equals(new Point((int) centerPoint.getX() + 60,(int) centerPoint.getY() + 34)) && voisins[0] == null){
                 voisins[0] = current;

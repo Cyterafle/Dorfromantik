@@ -82,7 +82,7 @@ public class KeyHandler implements KeyListener {
      */
     @Override
     public void keyReleased(KeyEvent e) {
-        controller.updateNextTuile();
+        controller.updateTuile();
     }
 
     /**
