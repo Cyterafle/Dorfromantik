@@ -66,9 +66,21 @@ public class PlateauController {
      * </p>
      */
     public void updateTuile() {
+        System.out.println();
         model.rechercheVoisins();
         model.ajouterTuileCourante();
         model.calculerScore();
+        frame.getInfosPanel().repaint();
+    }
+
+    /**
+     * Met à jour l'affichage de la tuile suivante en aperçu.
+     * <p>
+     * Cette méthode est appelée pour rafraîchir le panneau d'informations
+     * après une interaction utilisateur.
+     * </p>
+     */
+    public void updateNextTuile() {
         frame.getInfosPanel().repaint();
     }
 

@@ -41,7 +41,7 @@ public class MenuView {
     private JPanel cardPanel;
 
     /**
-     * Bouton permettant de jouer à un plateau.
+     * Bouton permettant de jouer.
      */
     private JButton jouerPlateauButton;
 
@@ -151,7 +151,7 @@ public class MenuView {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.CENTER;
 
-        jouerPlateauButton = new JButton("Jouer un Plateau");
+        jouerPlateauButton = new JButton("Choisir une série");
         jouerPlateauButton.setPreferredSize(new Dimension(250, 50));
         gbc.gridy = 1;
         panel.add(jouerPlateauButton, gbc);

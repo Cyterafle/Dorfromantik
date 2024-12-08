@@ -80,7 +80,7 @@ public class PlateauModel {
         for (Terrains terrain : Terrains.values()) {
             poches.put(terrain, new ArrayList<>());
         }
-        ajouterTuile(tuiles.get(0));
+        ajouterTuile(tuiles.get(currentTuile));
     }
 
     /**

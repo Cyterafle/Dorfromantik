@@ -70,7 +70,7 @@ public class MouseHandler extends MouseAdapter {
                 controller.updateTuile(); // Met à jour la tuile active
             }
             if (plateau.getTuilesListSize() == 49) {
-                controller.endGame(); // Termine la partie si 49 tuiles sont placées
+                controller.endGame(); // Termine la partie si 50 tuiles sont placées
             }
         }
     }

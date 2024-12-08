@@ -207,20 +207,22 @@ public class Tuile {
         for (int i = 0; i < tuiles.size(); ++i){
             Tuile current = tuiles.get(i);
             Point currentPos = current.getCenterPoint();
-            if (currentPos == null)
+            if (currentPos == null){
+                System.out.println("Position :" + centerPoint.toString() + " , voisins : " + Arrays.toString(voisins));
                 return;
-            else if (currentPos == new Point((int) centerPoint.getX() + 60,(int) centerPoint.getY() + 34) && voisins[0] == null)
+            } else if (currentPos.equals(new Point((int) centerPoint.getX() + 60,(int) centerPoint.getY() + 34)) && voisins[0] == null){
                 voisins[0] = current;
-            else if (currentPos == new Point((int) centerPoint.getX(),(int) centerPoint.getY() + 69) && voisins[1] == null)
+            } else if (currentPos.equals(new Point((int) centerPoint.getX(),(int) centerPoint.getY() + 69)) && voisins[1] == null){
                 voisins[1] = current;
-            else if (currentPos == new Point((int) centerPoint.getX() - 60,(int) centerPoint.getY() + 35) && voisins[2] == null)
+            } else if (currentPos.equals(new Point((int) centerPoint.getX() - 60,(int) centerPoint.getY() + 35)) && voisins[2] == null){
                 voisins[2] = current;
-            else if (currentPos == new Point((int) centerPoint.getX() - 60,(int) centerPoint.getY() - 34) && voisins[3] == null)
+            } else if (currentPos.equals(new Point((int) centerPoint.getX() - 60,(int) centerPoint.getY() - 34)) && voisins[3] == null){
                 voisins[3] = current;
-            else if (currentPos == new Point((int) centerPoint.getX(),(int) centerPoint.getY() - 69) && voisins[4] == null)
+            } else if (currentPos.equals(new Point((int) centerPoint.getX(),(int) centerPoint.getY() - 69)) && voisins[4] == null){
                 voisins[4] = current;
-            else if (currentPos == new Point((int) centerPoint.getX() + 60,(int) centerPoint.getY() - 35) && voisins[5] == null)
+            } else if (currentPos.equals(new Point((int) centerPoint.getX() + 60,(int) centerPoint.getY() - 35)) && voisins[5] == null){
                 voisins[5] = current;
+            }
         }
     }
 

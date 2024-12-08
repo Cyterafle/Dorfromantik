@@ -26,16 +26,6 @@ public class PlateauInfos extends JPanel {
      */
     private PlateauPanel panel;
 
-    /**
-     * Position X pour dessiner les informations sur le panneau.
-     */
-    private int x;
-
-    /**
-     * Position Y pour dessiner les informations sur le panneau.
-     */
-    private int y;
-
     private PlateauModel model;
 
     /**
@@ -73,7 +63,7 @@ public class PlateauInfos extends JPanel {
         // Affiche le texte "Prochaine tuile :"
         g.drawString("Prochaine tuile :", 70, 350);
 
-        // Dessine la prochaine tuile à partir du panneau principal
+        // Dessine la prochaine tuile à partir des informations du panneau principal
         panel.getNextTuile(g2d, 100, 400);
     }
 }
