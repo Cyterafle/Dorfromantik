@@ -254,9 +254,6 @@ public class PlateauPanel extends JPanel {
             g2d.setColor(BORDER_COLOR);
             g2d.draw(triangle);
         }
-
-        model.rechercheVoisins();
-        model.calculerScore();
     }
 
     /**

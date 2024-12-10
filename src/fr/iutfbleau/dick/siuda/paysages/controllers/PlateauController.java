@@ -66,15 +66,13 @@ public class PlateauController {
      * </p>
      */
     public void updateTuile() {
-        model.calculerScore();
         frame.getInfosPanel().repaint();
     }
 
     public void updatePlateau(){
         frame.getPanel().repaint();
-        model.rechercheVoisins();
-        
-        updateTuile();
+        model.rechercheVoisins();    
+        model.calculerScore();
     }
 
     public PlateauModel getModel(){

@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,7 +63,7 @@ public class PlateauModel {
     /**
      * Un dictionnaire permettant de stocker une liste de poches en fonction du terrain
      */
-    private Map<Terrains, Set<Map<Tuile, Integer>>> poches;
+    private Map<Terrains, List<Set<Tuile>>> poches;
 
     /**
      * Liste des hexagones sélectionnés sur le plateau.
@@ -88,7 +89,7 @@ public class PlateauModel {
         this.idSerie = idSerie;
         this.poches = new HashMap<>();
         for (Terrains terrain : Terrains.values()) {
-            poches.put(terrain, new HashSet<>());
+            poches.put(terrain, new ArrayList<>());
         }
         ajouterTuile(tuiles.get(currentTuile));
     }
@@ -172,70 +173,102 @@ public class PlateauModel {
     }
 
     /**
-     * Permet de mettre en mémoire la liste des tuiles de la série en cours
+     * Cette méthode permet de mettre en mémoire la liste des tuiles de la série en cours
      * @param list une List<E> de tuiles correspondant à celle de la série donnée en argument au constructeur
      */
     public void setTuiles(List<Tuile> list){
         tuiles = list;
     }
 
+    /**
+     * Cette méthode permet de retourner la liste des tuiles associées à la série en cours
+     * @return une liste chaînée de Tuiles
+     */
     public List<Tuile> getTuiles(){
         return tuiles;
     }
 
+    /**
+     * Cette méthode permet de connaître l'indice de la dernière tuile posée
+     * @return un entier se chargeant de cette représentation
+     */
     public int getCurrentTuile(){
         return currentTuile;
     }
 
+    /**
+     * Cette méthode permet d'incrémenter la valeur de l'indice correspondant à la dernière tuile posée
+     */
     public void incrementCurrentTuile(){
         ++currentTuile;
     }
 
+    /**
+     * Cette méthode renvoie l'id associée à la série courante
+     * @return un entier qui représente l'id
+     */
     public int getIdSerie(){
         return idSerie;
     }
 
+    /**
+     * Cette méthode permet de récupérer le score actuel de l'utilisateur
+     * @return un entier qui représente le score
+     */
     public int getScore(){
         return score;
     }
 
+    /**
+     * Cette méthode permet d'associer les tuiles posées à leur coordonnées sur le plateau
+     */
     private void setTuilePoint(){
         for (int i = 1; i <= getSelectedHexagonsSize(); ++i){
             tuiles.get(i).setCenterPoint(selectedHexagons.get(i-1));
         }
     }
 
+    /**
+     * Cette méthode qui permet aux tuiles du plateau de chercher leurs voisins peut se décomposer en 3 parties
+     * @implNote En premier lieu, elle permet de mettre à jour les tuiles nouvellement posées en leur communicant leur position sur le plateau
+     * @implNote En second lieu, elle va pour chaque tuile posée lancer la recherche des voisins
+     * @implNote En dernier lieu, la dernière tuile posée va rechercher des poches chez ses voisins
+     */
     public void rechercheVoisins(){
-        if (selectedHexagons.size() > 0){
-            setTuilePoint();
-        }
+        Tuile current, next;
+        setTuilePoint();
         for (int i = 0; i < tuiles.size(); ++i){
-            Tuile current = tuiles.get(i);
-            Tuile next;
-            if (i <= 48)
+            current = tuiles.get(i);
+            if (i <= 48){
                 next = tuiles.get(i+1);
-            else
+            } else {
                 next = tuiles.get(i);
-            if (current.getCenterPoint() != null){
-                current.rechercheVoisins(tuiles);
-            } else if (next.getCenterPoint() == null || next.getCenterPoint() == current.getCenterPoint()){
+            }
+            current.rechercheVoisins(tuiles);
+            if (next.getCenterPoint() == null || next.getCenterPoint().equals(current.getCenterPoint())){
                 ajouterTuile(current);
                 return;
             }
         }
     }
 
+    /**
+     * Cette méthode va parcourir les poches afin de calculer le score
+     */
     public void calculerScore() {
         int score = 0;
         String calcul = "";
         Set<Tuile> tuilesVisitees;
-        for (Map.Entry<Terrains, Set<Map<Tuile, Integer>>> entry : poches.entrySet()) {
+        for (Map.Entry<Terrains, List<Set<Tuile>>> entry : poches.entrySet()) {
             tuilesVisitees = new HashSet<>();
+            System.out.println(entry.toString());
             calcul += "(";
-            for (Map<Tuile, Integer> poche : entry.getValue()) {
+            for (Set<Tuile> poche : entry.getValue()) {
+                System.out.println(poche.toString());
                 int taillePoche = 0;
-                for (Map.Entry<Tuile, Integer> tuile : poche.entrySet()){
-                    if (tuilesVisitees.add(tuile.getKey())){
+                for (Tuile tuile : poche){
+                    System.out.println(Arrays.toString(tuile.getVoisins()));
+                    if (tuilesVisitees.add(tuile)){
                         ++taillePoche;
                     }
                 }
@@ -246,40 +279,54 @@ public class PlateauModel {
             calcul += ")";
         }
         calcul += " = " + score;
-        System.out.println(calcul);
+        //System.out.println(calcul);
         this.score = score;
+        view.getInfosPanel().repaint();
     }
 
+
+    /**
+     * Cette méthode permet d'ajouter la tuile prise en paramètre à la poche de son voisin pour chaque côté de celle-ci ou de créer une poche dont elle est l'origine
+     * @param tuile La tuile concernée
+     */
     private void ajouterTuile(Tuile tuile) {
         for (int i = 0; i < 6; i++) { // Parcourir les côtés de la tuile
             Terrains terrain = tuile.getTerrainAt(i); // Terrain du côté i
             Tuile voisin = tuile.getVoisin(i); // Tuile voisine du côté i (peut être null)
             int terrainVoisin = (i + 3) % 6;
+            Set<Tuile> poche;
 
             if (voisin != null && voisin.getTerrainAt(terrainVoisin) == terrain) {
                 // Connecté au même terrain
-                Map<Tuile, Integer> pocheTrouvee = trouverPoche(terrain, voisin, terrainVoisin);
-                if (pocheTrouvee != null) {
-                    pocheTrouvee.put(tuile, i);
+                poche = trouverPoche(terrain, voisin);
+                if (poche != null) {
+                    poche.add(tuile);
                 } else {
                     // Ajouter à une nouvelle poche si pas connectée
-                    Map<Tuile, Integer> nouvellePoche = new HashMap<>();
-                    nouvellePoche.put(tuile, i);
-                    poches.get(terrain).add(nouvellePoche);
+                    poche = new HashSet<>();
+                    poche.add(tuile);
+                    poches.get(terrain).add(poche);
                 }
             } else {
                 // Nouveau terrain isolé
-                Map<Tuile, Integer> nouvellePoche = new HashMap<>();
-                nouvellePoche.put(tuile, i);
-                poches.get(terrain).add(nouvellePoche);
+                poche = new HashSet<>();
+                poche.add(tuile);
+                poches.get(terrain).add(poche);
             }
         }
     }
 
-    private Map<Tuile, Integer> trouverPoche(Terrains terrain, Tuile tuile, int cote) {
-        for (Map<Tuile, Integer> poche : poches.get(terrain)) {
+    /**
+     * Cette méthode va chercher dans une tuile donnée, au côté donné une poche associée au terrain pris en argument
+     * @param terrain le terrain associée à la poche que l'on cherche
+     * @param tuile la tuile dont on cherche la poche
+     * @param cote le côté de la tuile dont on cherche la poche
+     * @return la poche ou null si cette dernière n'existe pas
+     */
+    private Set<Tuile> trouverPoche(Terrains terrain, Tuile tuile) {
+        for (Set<Tuile> poche : poches.get(terrain)) {
             try {
-                if (poche.get(tuile) == cote){
+                if (poche.contains(tuile)){
                     return poche;
                 }
             } catch (NullPointerException e) {
@@ -289,6 +336,10 @@ public class PlateauModel {
         return null;
     }
 
+    /**
+     * Cette méthode renvoie la liste des différentes positions des hexagones posées
+     * @return une liste chaînée correspondant à la description 
+     */
     public List<Point> getSelectedHexagons(){
         return selectedHexagons;
     }

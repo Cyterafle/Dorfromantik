@@ -111,8 +111,8 @@ public class Tuile {
      */
     @Override
     public String toString() {
-        return String.format("Tuile [ID: %d, Terrain ID: %d, Mer: %d, Pré: %d, Champs: %d, Forêt: %d, Montagne: %d], (Coordonnées %d, %d)",
-                idTuile, idTerrain, mer, pré, champs, foret, montagne, centerPoint.x, centerPoint.y);
+        return String.format("Tuile [ID: %d, Terrain ID: %d, Mer: %d, Pré: %d, Champs: %d, Forêt: %d, Montagne: %d]",
+                idTuile, idTerrain, mer, pré, champs, foret, montagne);
     }
 
 
@@ -227,5 +227,9 @@ public class Tuile {
 
     public Tuile getVoisin(int i){
         return voisins[i];
+    }
+
+    public Tuile[] getVoisins(){
+        return voisins;
     }
 }
