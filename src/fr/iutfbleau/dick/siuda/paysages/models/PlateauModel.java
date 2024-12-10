@@ -211,10 +211,14 @@ public class PlateauModel {
         }
         for (int i = 0; i < tuiles.size(); ++i){
             Tuile current = tuiles.get(i);
-            Tuile next = tuiles.get(i+1);
+            Tuile next;
+            if (i < 48)
+                next = tuiles.get(i+1);
+            else
+                next = tuiles.get(i);
             if (current.getCenterPoint() != null){
                 current.rechercheVoisins(tuiles);
-            } else if (next.getCenterPoint() == null){
+            } else if (next.getCenterPoint() == null || next.getCenterPoint() == current.getCenterPoint()){
                 ajouterTuile(current);
                 return;
             }
