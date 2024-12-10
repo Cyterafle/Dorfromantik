@@ -212,7 +212,7 @@ public class PlateauModel {
         for (int i = 0; i < tuiles.size(); ++i){
             Tuile current = tuiles.get(i);
             Tuile next;
-            if (i < 48)
+            if (i <= 48)
                 next = tuiles.get(i+1);
             else
                 next = tuiles.get(i);
