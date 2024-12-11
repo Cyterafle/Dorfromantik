@@ -5,11 +5,7 @@ import javax.swing.*;
 import fr.iutfbleau.dick.siuda.paysages.models.*;
 import java.awt.*;
 import java.awt.geom.Path2D;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * La classe <code>PlateauPanel</code> gère l'affichage graphique du plateau de jeu.

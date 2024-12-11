@@ -31,6 +31,11 @@ public class ScoreModel {
     private int score;
 
     /**
+     * Identifiant de la partie précédemment terminée
+     */
+    private int idSerie;
+
+    /**
      * Liste contenant le top 10 des scores pour la série donnée
      */
     private List<Integer> scores;
@@ -41,14 +46,16 @@ public class ScoreModel {
      * Initialise la connexion à la base de données via la classe <code>Connexion</code>.
      * </p>
      */
-    public ScoreModel(int score) {
+    public ScoreModel(int score, int idSerie) {
         cnx = Connexion.getInstance().getCnx();
-        this.scores = new ArrayList<>();
+        addScore(idSerie, score);
+        this.scores = afficherScoresPourSerie(idSerie);
         this.score = score;
+        this.idSerie = idSerie;
     }
 
     /**
-     * Récupère les scores pour une série donnée.
+     * Récupère jusqu'aux 10 meilleurs scores pour une série donnée.
      * <p>
      * Cette méthode effectue une requête SQL pour obtenir les scores les plus élevés
      * associés à une série spécifique, triés par ordre décroissant.
@@ -96,18 +103,73 @@ public class ScoreModel {
         }
     }
 
+    /**
+     * Récupère le nombre de participants de la série
+     * @return un entier représentant le nombre de participants
+     */
+    public int getTotalParticipants(){
+        String query = "SELECT COUNT(*) AS players FROM Scores WHERE idSerie = ?";
+        int participants = 0;
+        try (PreparedStatement pst = cnx.prepareStatement(query)){
+            pst.setInt(1, idSerie);
+            ResultSet rst = pst.executeQuery();
+            if (rst.next())
+                participants = rst.getInt(1);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return participants;
+    }
+
+    /**
+     * Récupère le rang d'un joueur selon son score
+     * @return un entier représentant son rang
+     */
+    public int getJoueurRang(){
+        String query="SELECT COUNT(*) + 1 AS rang FROM Scores WHERE score > ? and idSerie = ?";
+        int rang = 0;
+        try (PreparedStatement pst = cnx.prepareStatement(query)){
+            pst.setInt(1, score);
+            pst.setInt(2, idSerie);
+            ResultSet rst = pst.executeQuery();
+            if (rst.next())
+                rang = rst.getInt(1);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return rang;
+    }
+
+    /**
+     * Getter renvoyant le score récupéré de la partie fraîchement terminé
+     * @return un entier représentant le score
+     */
     public int getScore(){
         return score;
     }
 
-    public void setScores(List<Integer> scores){
-        this.scores = scores;
+    /**
+     * Getter renvoyant l'identifiant récupéré de la partie fraîchement terminé
+     * @return un entier représentant l'identifiant
+     */
+    public int getIdSerie(){
+        return idSerie;
     }
 
+
+    /**
+     * Getter renvoyant la liste des meilleurs scores
+     * @return la liste chaînée correspondante
+     */
     public List<Integer> getScores(){
         return scores;
     }
 
+
+    /**
+     * Getter envoyant la taille de la liste des meilleurs scores
+     * @return
+     */
     public int getScoresSize(){
         return scores.size();
     }

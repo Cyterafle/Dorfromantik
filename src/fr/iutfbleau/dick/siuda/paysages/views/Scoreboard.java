@@ -2,13 +2,10 @@ package fr.iutfbleau.dick.siuda.paysages.views;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import fr.iutfbleau.dick.siuda.paysages.models.ScoreModel;
-
-import java.util.List;
 
 /**
  * La classe <code>Scoreboard</code> représente une fenêtre affichant les 10 meilleurs scores pour une série donnée.
@@ -28,6 +25,11 @@ public class Scoreboard extends JFrame {
      */
     private JButton backButton;
 
+    /** 
+     * Modèle afin d'avoir accès aux données relatives aux scores
+    */
+    private ScoreModel model;
+
     /**
      * Constructeur de la classe <code>Scoreboard</code>.
      * <p>
@@ -38,14 +40,15 @@ public class Scoreboard extends JFrame {
      * @param idSerie L'identifiant de la série pour laquelle les scores sont affichés.
      * @param scores Une liste des scores à afficher (au maximum 10 scores).
      */
-    public Scoreboard(int idSerie, ScoreModel model) {
+    public Scoreboard(ScoreModel model) {
+        this.model = model;
         setTitle("Classement des dix meilleurs scores");
         setSize(800, 500);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
         // Titre
-        JLabel titleLabel = new JLabel("Classement pour la série " + idSerie);
+        JLabel titleLabel = new JLabel("Classement pour la série " + model.getIdSerie());
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         add(titleLabel, BorderLayout.NORTH);
@@ -77,7 +80,7 @@ public class Scoreboard extends JFrame {
 
         // Ajout du tableau et d'un texte qui indique la position du score réalisé
         JPanel tableau = new JPanel(new BorderLayout());
-        String score = String.format("Score actuel : %d, vous êtes donc %s", model.getScore(), getRankString(model.getScore(), model.getScores()));
+        String score = String.format("Score actuel : %d, vous êtes donc %s", model.getScore(), getRankString());
         JTextArea scores = new JTextArea(score);
         scores.setFont(new Font("Arial", Font.PLAIN, 14));
         tableau.add(table, BorderLayout.CENTER);
@@ -107,10 +110,11 @@ public class Scoreboard extends JFrame {
         }
     }
 
-    private String getRankString(int score, List<Integer> listeScores){
-        int rang = listeScores.indexOf(score) + 1;
+    private String getRankString(){
+        int rang = model.getJoueurRang();
+        int total = model.getTotalParticipants();
         String RangEtSuffix = rang + getRankSuffix(rang);
-        return String.format("%s sur %s", RangEtSuffix, listeScores.size());
+        return String.format("%s sur %d", RangEtSuffix, total);
     }
 
     /**

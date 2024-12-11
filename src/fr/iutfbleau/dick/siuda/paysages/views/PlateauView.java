@@ -4,10 +4,8 @@ import java.awt.*;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import java.util.List;
 
 import fr.iutfbleau.dick.siuda.paysages.models.PlateauModel;
-import fr.iutfbleau.dick.siuda.paysages.models.Tuile;
 
 /**
  * La classe <code>PlateauView</code> représente la vue principale du plateau de jeu.

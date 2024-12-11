@@ -2,7 +2,6 @@ package fr.iutfbleau.dick.siuda.paysages.controllers;
 
 import fr.iutfbleau.dick.siuda.paysages.models.ScoreModel;
 import fr.iutfbleau.dick.siuda.paysages.views.Scoreboard;
-import java.awt.event.*;
 
 /**
  * La classe <code>ScoreController</code> gère l'interaction entre la vue 
@@ -39,10 +38,8 @@ public class ScoreController {
      * @param idSerie L'identifiant de la série pour laquelle les scores doivent être affichés.
      */
     public ScoreController(int idSerie, int score) {
-        model = new ScoreModel(score);
-        model.addScore(idSerie, score);
-        model.setScores(model.afficherScoresPourSerie(idSerie));
-        view = new Scoreboard(idSerie, model);
+        model = new ScoreModel(score, idSerie);
+        view = new Scoreboard(model);
 
         // Ajout d'un gestionnaire d'événements au bouton "Retour"
         view.getBackButton().addActionListener(new ScoreActionListener(view));

@@ -1,7 +1,5 @@
 package fr.iutfbleau.dick.siuda.paysages.models;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import java.awt.Point;

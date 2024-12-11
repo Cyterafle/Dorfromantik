@@ -27,11 +27,6 @@ public class MenuController {
     private MenuView view;
 
     /**
-     * Le modèle associé au menu.
-     */
-    private MenuModel model;
-
-    /**
      * Constructeur de la classe <code>MenuController</code>.
      * <p>
      * Initialise le contrôleur en liant la vue et le modèle, et configure les gestionnaires d'événements
@@ -43,7 +38,6 @@ public class MenuController {
      */
     public MenuController(MenuView view, MenuModel model) {
         this.view = view;
-        this.model = model;
 
         // Configuration des actions pour les boutons de la vue
         view.getJouerPlateauButton().addActionListener(e -> {
