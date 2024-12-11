@@ -88,6 +88,6 @@ public class PlateauController {
     public void endGame() {
         JOptionPane.showMessageDialog(frame, "Vous avez posé toutes les tuiles ! Le jeu est terminé !");
         frame.dispose();
-        new ScoreController(model.getIdSerie());
+        new ScoreController(model.getIdSerie(), model.getScore());
     }
 }

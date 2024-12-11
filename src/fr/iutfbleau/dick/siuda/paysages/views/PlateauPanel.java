@@ -244,11 +244,7 @@ public class PlateauPanel extends JPanel {
             triangle.addPoint(x, y); // Centre de l'hexagone
             triangle.addPoint((int) xPoints[i], (int) yPoints[i]); // Premier sommet
             triangle.addPoint((int) xPoints[next], (int) yPoints[next]); // Sommet suivant
-            try{
-                g2d.setColor(terrains[i].getColor());
-            } catch (NullPointerException ex) {
-                //TODO
-            }
+            g2d.setColor(terrains[i].getColor());
             // Définir une couleur pour chaque triangle
             g2d.fill(triangle);
             g2d.setColor(BORDER_COLOR);

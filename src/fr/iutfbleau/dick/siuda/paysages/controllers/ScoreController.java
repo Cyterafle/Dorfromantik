@@ -38,8 +38,8 @@ public class ScoreController {
      *
      * @param idSerie L'identifiant de la série pour laquelle les scores doivent être affichés.
      */
-    public ScoreController(int idSerie) {
-        model = new ScoreModel();
+    public ScoreController(int idSerie, int score) {
+        model = new ScoreModel(score);
         view = new Scoreboard(idSerie, model.afficherScoresPourSerie(idSerie));
 
         // Ajout d'un gestionnaire d'événements au bouton "Retour"

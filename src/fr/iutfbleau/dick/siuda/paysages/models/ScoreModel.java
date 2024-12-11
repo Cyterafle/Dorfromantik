@@ -26,13 +26,19 @@ public class ScoreModel {
     private Connection cnx;
 
     /**
+     * Score de la partie précédemment terminée
+     */
+    private int score;
+
+    /**
      * Constructeur de la classe <code>ScoreModel</code>.
      * <p>
      * Initialise la connexion à la base de données via la classe <code>Connexion</code>.
      * </p>
      */
-    public ScoreModel() {
+    public ScoreModel(int score) {
         cnx = Connexion.getInstance().getCnx();
+        this.score = score;
     }
 
     /**
