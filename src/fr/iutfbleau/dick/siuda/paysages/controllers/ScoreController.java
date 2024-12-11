@@ -45,11 +45,6 @@ public class ScoreController {
         view = new Scoreboard(idSerie, model);
 
         // Ajout d'un gestionnaire d'événements au bouton "Retour"
-        view.getBackButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                view.dispose(); // Ferme la fenêtre des scores
-            }
-        });
+        view.getBackButton().addActionListener(new ScoreActionListener(view));
     }
 }

@@ -35,8 +35,8 @@ run: ${OUTJAR}
 ### REGLES OPTIONNELLES ###
 
 clean:
-	-rm -rf $(OUTDIR)
-	-rm -rf $(DOCDIR)
+	@-rm -rf $(OUTDIR)
+	@-rm -rf $(DOCDIR)
 
 mrproper: clean all
 
