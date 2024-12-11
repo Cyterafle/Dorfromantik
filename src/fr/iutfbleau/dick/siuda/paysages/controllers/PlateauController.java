@@ -70,7 +70,6 @@ public class PlateauController {
     }
 
     public void updatePlateau(){
-        frame.getPanel().repaint();
         model.rechercheVoisins();    
         model.calculerScore();
     }

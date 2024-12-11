@@ -209,18 +209,23 @@ public class Tuile {
             Point currentPos = current.getCenterPoint();
             if (currentPos == null){
                 return;
-            } else if (currentPos.equals(new Point((int) centerPoint.getX() + 60,(int) centerPoint.getY() + 34)) && voisins[0] == null){
-                voisins[0] = current;
-            } else if (currentPos.equals(new Point((int) centerPoint.getX(),(int) centerPoint.getY() + 69)) && voisins[1] == null){
-                voisins[1] = current;
-            } else if (currentPos.equals(new Point((int) centerPoint.getX() - 60,(int) centerPoint.getY() + 35)) && voisins[2] == null){
-                voisins[2] = current;
-            } else if (currentPos.equals(new Point((int) centerPoint.getX() - 60,(int) centerPoint.getY() - 34)) && voisins[3] == null){
-                voisins[3] = current;
-            } else if (currentPos.equals(new Point((int) centerPoint.getX(),(int) centerPoint.getY() - 69)) && voisins[4] == null){
-                voisins[4] = current;
-            } else if (currentPos.equals(new Point((int) centerPoint.getX() + 60,(int) centerPoint.getY() - 35)) && voisins[5] == null){
-                voisins[5] = current;
+            }
+            for (int x = -1; x <= 1; ++x){
+                for (int y = -1; y <= 1; ++y){
+                    if (currentPos.equals(new Point((int) centerPoint.getX() + 60 + x,(int) centerPoint.getY() + 34 + y)) && voisins[0] == null){
+                        voisins[0] = current;
+                    } else if (currentPos.equals(new Point((int) centerPoint.getX() + x,(int) centerPoint.getY() + 69 + y)) && voisins[1] == null){
+                        voisins[1] = current;
+                    } else if (currentPos.equals(new Point((int) centerPoint.getX() - 60 + x,(int) centerPoint.getY() + 35 + y)) && voisins[2] == null){
+                        voisins[2] = current;
+                    } else if (currentPos.equals(new Point((int) centerPoint.getX() - 60 + x,(int) centerPoint.getY() - 34 + y)) && voisins[3] == null){
+                        voisins[3] = current;
+                    } else if (currentPos.equals(new Point((int) centerPoint.getX() + x,(int) centerPoint.getY() - 69 + y)) && voisins[4] == null){
+                        voisins[4] = current;
+                    } else if (currentPos.equals(new Point((int) centerPoint.getX() + 60 + x,(int) centerPoint.getY() - 35 + y)) && voisins[5] == null){
+                        voisins[5] = current;
+                    }
+                }
             }
         }
     }

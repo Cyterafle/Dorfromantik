@@ -67,7 +67,7 @@ public class MouseHandler extends MouseAdapter {
 
         if (SwingUtilities.isLeftMouseButton(e)) {
             if (plateau.selectHexagon(e.getPoint())) {
-                controller.updatePlateau();
+                plateau.repaint();
                 if (controller.getModel().getSelectedHexagonsSize() == 49) {
                     controller.endGame(); // Termine la partie si 50 tuiles sont placées
                 }
@@ -89,6 +89,10 @@ public class MouseHandler extends MouseAdapter {
         if (SwingUtilities.isRightMouseButton(e)) {
             plateau.setDragStartPoint(null);
             plateau.setCursor(Cursor.getDefaultCursor());
+        }
+
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            controller.updatePlateau();
         }
     }
 }

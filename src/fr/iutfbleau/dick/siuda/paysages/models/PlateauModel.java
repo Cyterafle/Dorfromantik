@@ -256,19 +256,22 @@ public class PlateauModel {
      * Cette méthode va parcourir les poches afin de calculer le score
      */
     public void calculerScore() {
+        System.out.println();
         int score = 0;
         String calcul = "";
         Set<Tuile> tuilesVisitees;
         for (Map.Entry<Terrains, List<Set<Tuile>>> entry : poches.entrySet()) {
             tuilesVisitees = new HashSet<>();
+            System.out.println();
             System.out.println(entry.toString());
             calcul += "(";
             for (Set<Tuile> poche : entry.getValue()) {
-                System.out.println(poche.toString());
+                System.out.println("poche = " + poche.toString());
                 int taillePoche = 0;
                 for (Tuile tuile : poche){
-                    System.out.println(Arrays.toString(tuile.getVoisins()));
                     if (tuilesVisitees.add(tuile)){
+                        System.out.println(tuile.getCenterPoint());
+                    System.out.println("Voisins de " + tuile.toString() + " = " + Arrays.toString(tuile.getVoisins()));
                         ++taillePoche;
                     }
                 }
