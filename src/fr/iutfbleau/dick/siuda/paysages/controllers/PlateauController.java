@@ -69,11 +69,20 @@ public class PlateauController {
         frame.getInfosPanel().repaint();
     }
 
+    /**
+     * Met à jour l'affichage des informations liées au plateau.
+     * <p>
+     * Cette méthode est appelée pour rafraîchir le plateau après une interaction utilisateur.
+     * </p>
+     */
     public void updatePlateau(){
         model.rechercheVoisins();    
         model.calculerScore();
     }
 
+    /**
+     * Renvoie au model le plateau. 
+     */
     public PlateauModel getModel(){
         return model;
     }

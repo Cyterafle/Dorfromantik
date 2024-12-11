@@ -40,7 +40,9 @@ public class ScoreController {
      */
     public ScoreController(int idSerie, int score) {
         model = new ScoreModel(score);
-        view = new Scoreboard(idSerie, model.afficherScoresPourSerie(idSerie));
+        model.addScore(idSerie, score);
+        model.setScores(model.afficherScoresPourSerie(idSerie));
+        view = new Scoreboard(idSerie, model);
 
         // Ajout d'un gestionnaire d'événements au bouton "Retour"
         view.getBackButton().addActionListener(new ActionListener() {

@@ -22,12 +22,12 @@ public enum Terrains {
     /**
      * Terrain de type "PRÉ", représenté par une couleur verte claire.
      */
-    PRE(new Color(144, 238, 144)),
+    PRE(new Color(58 , 157 , 35)),
 
     /**
      * Terrain de type "CHAMPS", représenté par la couleur jaune.
      */
-    CHAMPS(Color.YELLOW),
+    CHAMPS(new Color(232 , 214 , 48)),
 
     /**
      * Terrain de type "FORÊT", représenté par une couleur verte foncée.
