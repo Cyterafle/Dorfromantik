@@ -61,6 +61,26 @@ public class MenuView {
     private JFrame seriesFrame;
 
     /**
+     * Button permettant de lancer une partie
+     */
+    private JButton jouerButton;
+
+    /**
+     * Bouton permettant l'accès aux règles
+     */
+    private JButton reglesButton;
+
+    /**
+     * Button permettant de fermer le jeu
+     */
+    private JButton quitterButton;
+
+    /**
+     * Bouton permettant l'accès à un récapitulatif rapide des commandes
+     */
+    private JButton commandesButton;
+
+    /**
      * Constructeur de la classe <code>MenuView</code>.
      * <p>
      * Initialise l'interface utilisateur, configure les panneaux et les boutons, 
@@ -110,29 +130,25 @@ public class MenuView {
 
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        JButton jouerButton = new JButton("Jouer");
+        jouerButton = new JButton("Jouer");
         jouerButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
         gbc.gridx = 0;
         gbc.gridy = 0;
-        jouerButton.addActionListener(e -> cardLayout.show(cardPanel, "Jouer"));
         panel.add(jouerButton, gbc);
 
-        JButton reglesButton = new JButton("Règles");
+        reglesButton = new JButton("Règles");
         reglesButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
         gbc.gridy = 1;
-        reglesButton.addActionListener(e -> cardLayout.show(cardPanel, "Règles"));
         panel.add(reglesButton, gbc);
 
-        JButton commandesButton = new JButton("Commandes");
+        commandesButton = new JButton("Commandes");
         commandesButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
         gbc.gridy = 2;
-        commandesButton.addActionListener(e -> cardLayout.show(cardPanel, "Commandes"));
         panel.add(commandesButton, gbc);
 
-        JButton quitterButton = new JButton("Quitter");
+        quitterButton = new JButton("Quitter");
         quitterButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
         gbc.gridy = 3;
-        quitterButton.addActionListener(e -> System.exit(0));
         panel.add(quitterButton, gbc);
 
         return panel;
@@ -406,5 +422,21 @@ public class MenuView {
      */
     public JFrame getSeriesFrame() {
         return seriesFrame;
+    }
+
+    public JButton getJouerButton(){
+        return jouerButton;
+    }
+
+    public JButton getCommandesButton(){
+        return commandesButton;
+    }
+
+    public JButton getReglesButton(){
+        return reglesButton;
+    }
+
+    public JButton getQuitterButton(){
+        return quitterButton;
     }
 }

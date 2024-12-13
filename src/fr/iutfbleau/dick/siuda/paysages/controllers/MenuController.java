@@ -6,6 +6,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import java.util.Map;
 
+import fr.iutfbleau.dick.siuda.paysages.models.Connexion;
 import fr.iutfbleau.dick.siuda.paysages.models.MenuModel;
 
 /**
@@ -52,6 +53,23 @@ public class MenuController {
         view.getCommandesRetourButton().addActionListener(e -> 
             view.getCardLayout().show(view.getCardPanel(), "Menu")
         );
+
+        view.getJouerButton().addActionListener(e -> 
+            view.getCardLayout().show(view.getCardPanel(), "Jouer")
+        );
+
+        view.getCommandesButton().addActionListener(e -> 
+            view.getCardLayout().show(view.getCardPanel(), "Commandes")
+        );
+
+        view.getReglesButton().addActionListener(e -> 
+            view.getCardLayout().show(view.getCardPanel(), "Règles")
+        );
+
+        view.getQuitterButton().addActionListener(e -> {
+            Connexion.getInstance().fermeture();
+            System.exit(0);
+        });
     }
 
     /**

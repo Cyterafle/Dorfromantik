@@ -29,7 +29,6 @@ public class ScoreActionListener implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        Connexion.getInstance().fermeture();
         view.dispose(); // Ferme la fenêtre des scores
     }
 }
